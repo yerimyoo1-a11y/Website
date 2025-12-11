@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>YERIM YOO</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- 아이콘용 Font Awesome -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+  <!-- 폰트 -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tilt+Warp&display=swap">
+
+  <style>
+    :root {
+      --bg-gray: #dad8d7;
+      --grad-top: #ff8ac4;   /* JS에서 랜덤으로 덮어씀 */
+      --grad-bottom: #ff00ff;
+      --text-main: #111;
+      --header-height: 70px;
+      --footer-height: 60px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+      color: var(--text-main);
+      background:
+        linear-gradient(to bottom,
+          var(--grad-top) 0%,
+          var(--grad-top) 10%,
+          var(--bg-gray) 30%,
+          var(--bg-gray) 70%,
+          var(--grad-bottom) 90%,
+          var(--grad-bottom) 100%
+        );
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 상단 헤더 */
+    header {
+      height: var(--header-height);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(4px);
+    }
+
+    .logo {
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+
+      font-family: "Tilt Warp", system-ui, -apple-system, sans-serif;
+      font-size: 48px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      line-height: 1;
+
+      display: flex;
+      align-items: center;
+
+      color: rgba(0, 0, 0, 0);
+      -webkit-text-stroke: 1.4px #000;
+
+      transform: scaleY(0.8);
+      transform-origin: bottom left;
+    }
+
+    .logo:hover {
+      opacity: 0.8;
+    }
+
+    nav {
+      display: flex;
+      gap: 24px;
+      font-size: 17px;
+      text-transform: lowercase;
+      letter-spacing: 0.06em;
+    }
+
+    nav button {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font: inherit;
+      padding: 4px 0 2px;
+      position: relative;
+    }
+
+    nav button::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -3px;
+      width: 0;
+      height: 1px;
+      background: #000;
+      transition: width 0.2s ease-out;
+    }
+
+    nav button:hover::after,
+    nav button.active::after {
+      width: 100%;
+    }
+
+    /* 메인 컨텐츠 */
+    main {
+      flex: 1;
+      padding: 20px 4vw 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+    }
+
+    section {
+      display: none;
+      max-width: 960px;
+      width: 100%;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    section.active {
+      display: block;
+    }
+
+    /* 홈 화면 */
+    #home {
+      margin-top: 40px;
+      text-align: center;
+    }
+
+    #home h1 {
+      font-size: 40px;
+      margin-bottom: 16px;
+      text-transform: lowercase;
+    }
+
+    #home p {
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    /* CV / contact 텍스트 공통 */
+    section h1 {
+      font-size: 32px;
+      margin-bottom: 16px;
+      text-transform: lowercase;
+    }
+
+    section p {
+      line-height: 1.5;
+      font-size: 15px;
+    }
+
+    /* === works: work list + 리스트/상세 === */
+    #works {
+      margin-top: 20px;
+      width: min(90vw, 1400px);
+      max-width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+      /* 왼쪽에 세로 work list 자리 확보 */
+    }
+
+    .works-header-line {
+      position: relative;
+      height: 0;
+      z-index: 6;
+    }
+
+    /* 🔥 초록 박스 = 이 요소의 bounding box
+       - 세로글씨(rotate(-90deg)) 그대로
+       - X: YERIM YOO 왼쪽과 맞추고
+       - Y: selected works 라인과 맞춤 (JS에서 조정) */
+    #workListsLabel {
+      font-size: 32px;                 /* cv / contact 제목 느낌 */
+      text-transform: lowercase;
+      cursor: pointer;
+
+      position: fixed;
+      left: 0;                         /* 실제 값은 JS에서 세팅 */
+      top: 0;
+
+      padding: 0px 10px;
+      border-radius: 0px;
+
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+
+      line-height: 1;
+      background: rgba(255, 255, 255, 0.0);
+
+      transform: rotate(-90deg);       /* 세로 글씨 */
+      transform-origin: left top;
+
+      transition:
+        background 0.18s ease-out,
+        box-shadow 0.18s ease-out,
+        opacity 0.18s ease-out;
+    }
+
+
+    .work-list-icon {
+      font-size: 1.1em;  /* 글자랑 비슷하게 */
+      transition: transform 0.18s ease-out, opacity 0.18s ease-out;
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    /* detail-mode일 때만 화살표 보여주기 */
+    #works.detail-mode .work-list-icon {
+      opacity: 0.85;
+      visibility: visible;
+    }
+
+    #works.detail-mode #workListsLabel:hover {
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow:
+        0 4px 10px rgba(0, 0, 0, 0.16),
+        0 0 0 1px rgba(0, 0, 0, 0.06);
+    }
+
+    #works.detail-mode #workListsLabel:hover::after {
+      width: 100%;
+    }
+
+    #works.detail-mode #workListsLabel:hover .work-list-icon {
+      transform: rotate(180deg);
+      opacity: 1;
+    }
+
+    .works-intro {
+      font-size: 13px;
+      margin-bottom: 14px;
+      line-height: 1.4;
+    }
+
+    .works-layout {
+      position: relative;
+
+  margin: 0 auto;  
+    }
+
+    /* 리스트 전체 (기본: 섹션 안에서 왼쪽 정렬) */
+    .works-list {
+      margin-top: 37px;
+      border-top: 1px solid #111;
+      padding-top: 4px;
+      background: transparent;
+    }
+
+    .work-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 8px 0 10px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.45);
+      cursor: pointer;
+    }
+
+    .work-row.active {
+      background: rgba(255, 255, 255, 0.7);
+    }
+
+    .work-year {
+      width: 54px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding-top: 4px;
+      flex-shrink: 0;
+    }
+
+    .work-main {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .work-title-button {
+      background: none;
+      border: none;
+      padding: 0;
+      margin: 0;
+      cursor: pointer;
+      font-size: 15px;
+      text-align: left;
+      text-transform: none;
+    }
+
+    .work-title-button:hover {
+      text-decoration: underline;
+    }
+
+    .work-tags {
+      font-size: 12px;
+      opacity: 0.8;
+      margin-top: 3px;
+    }
+
+    /* 상세 패널 */
+    .work-detail-panel {
+      margin-top: 26px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .work-detail-placeholder {
+      font-size: 13px;
+      opacity: 0.8;
+      border-top: 1px solid #111;
+      padding-top: 10px;
+    }
+
+    .work-detail-view {
+      display: none;
+    }
+
+    .work-detail-header {
+      border-bottom: 1px solid #111;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+
+    .work-detail-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .work-detail-title-row h2 {
+      margin: 0;
+      font-size: 22px;
+      text-transform: none;
+    }
+
+    .work-detail-meta {
+      text-align: right;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .work-detail-meta div + div {
+      margin-top: 2px;
+    }
+
+    .work-detail-submeta {
+      font-size: 13px;
+      margin-top: 6px;
+      opacity: 0.9;
+    }
+
+    /* 이미지 크게: 2 : 1 비율 */
+    .work-detail-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+      gap: 24px;
+      align-items: flex-start;
+    }
+
+    .work-detail-media {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .work-detail-media img {
+      width: 100%;
+      height: auto;
+      display: block;
+      background: #000;
+      object-fit: cover;
+    }
+
+    .work-detail-text-group {
+      font-size: 14px;
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .work-detail-text-group h3 {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+    }
+
+    .work-detail-block p + p {
+      margin-top: 8px;
+    }
+
+    .work-detail-side-meta {
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    .work-detail-side-meta div + div {
+      margin-top: 4px;
+    }
+
+    /* 초기 상태: 리스트만 보이는 모드 */
+    #works.list-only .work-detail-panel {
+      display: none;
+    }
+
+    /* 상세 모드: 리스트 플라이아웃, 상세 전체 폭 */
+    #works.detail-mode .work-detail-panel {
+      display: block;
+    }
+
+    /* detail-mode에서 리스트는 플로팅 팝업 */
+    #works.detail-mode .works-list {
+      position: absolute;
+      min-width: 320px;
+      background: rgba(250, 250, 250, 0.97);
+      border: 1px solid #111;
+      padding: 8px 12px 10px;
+      box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.25),
+        0 0 0 1px rgba(0, 0, 0, 0.08);
+      display: none;
+      z-index: 5;
+      margin-top: 0;
+      padding-top: 8px;
+      border-top-width: 1px;
+    }
+
+    #works.detail-mode .works-list.visible {
+      display: block;
+    }
+
+    @media (max-width: 900px) {
+      .work-detail-layout {
+        grid-template-columns: 1fr;
+      }
+      .work-detail-meta {
+        text-align: left;
+      }
+
+      #works {
+        padding-left: 0; /* 모바일에서 여백 줄이기 */
+      }
+
+      /* 모바일에서는 세로 라벨 대신 가로 텍스트로 */
+      #workListsLabel {
+        position: static;
+        transform: none;
+        transform-origin: initial;
+        font-size: 24px;
+        padding: 0;
+        border-radius: 0;
+        margin-bottom: 8px;
+      }
+
+      #works.detail-mode .works-list {
+        min-width: 0;
+        max-width: none;
+        right: 0;
+      }
+    }
+
+    @media (max-width: 640px) {
+      header {
+        padding: 0 16px;
+      }
+      main {
+        padding: 16px;
+      }
+      footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+      .footer-right {
+        width: 100%;
+        justify-content: space-between;
+      }
+    }
+
+    /* 푸터 */
+    footer {
+      height: var(--footer-height);
+      padding: 10px 32px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+    }
+
+    .lang-switch {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      font-size: 13px;
+    }
+
+    .lang-switch button {
+      min-width: 40px;
+      height: 28px;
+      border-radius: 999px;
+      border: 1px solid #000;
+      background: rgba(255,255,255,0.85);
+      cursor: pointer;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .lang-switch button.active {
+      background: #000;
+      color: #fff;
+    }
+
+    .footer-left {
+      display: flex;
+      align-items: center;
+    }
+
+    .footer-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .social-links a {
+      margin-left: 12px;
+      font-size: 20px;
+      text-decoration: none;
+      color: #000;
+    }
+
+    .social-links a:hover {
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo" id="homeButton">YERIM&nbsp;YOO</div>
+
+    <nav>
+      <button data-target="cv" class="active">cv</button>
+      <button data-target="works">works</button>
+      <button data-target="contact">contact</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- 홈 -->
+    <section id="home" class="active">
+  <h1>home</h1>
+
+  <div class="home-slideshow" id="homeSlideshow">
+    <button class="home-slide" id="homeSlideButton" type="button">
+      <div class="home-slide-image-wrap">
+        <img id="homeSlideImage" src="" alt="">
+      </div>
+      <div class="home-slide-meta">
+        <span id="homeSlideTitle" class="home-slide-title"></span>
+        <span id="homeSlideYear" class="home-slide-year"></span>
+      </div>
+    </button>
+
+    <div class="home-slide-controls">
+      <button id="homePrevSlide" type="button" aria-label="Previous work">prev</button>
+      <button id="homeNextSlide" type="button" aria-label="Next work">next</button>
+    </div>
+  </div>
+</section>
+
+
+    <!-- CV -->
+    <section id="cv">
+      <h1>cv</h1>
+      <p>
+        여기에 CV 내용 들어갈 자리야. 학교, 전시, 레지던시, 상, 퍼블리케이션 등.<br>
+        EN/KR 텍스트를 분리해서 넣고 싶으면 data-lang 속성으로 나눌 수 있어.
+      </p>
+    </section>
+
+    <!-- WORKS -->
+    <section id="works" class="list-only">
+      <!-- 세로 work list 라벨 -->
+      <div class="works-header-line">
+        <h1 id="workListsLabel">
+          work list
+          <span class="work-list-icon">▾</span>
+        </h1>
+      </div>
+
+      <p class="works-intro">
+     
+      </p>
+
+      <div class="works-layout">
+        <!-- 리스트 (맨 위가 최근작 2025 → 2024 → 2023 → 2022) -->
+        <div class="works-list" id="worksList">
+          <!-- 1. Unsecured Narratives (2025) -->
+          <div class="work-row" data-work-id="unsecured-narratives">
+            <div class="work-year">2025</div>
+            <div class="work-main">
+              <button class="work-title-button" type="button">
+                Unsecured Narratives
+              </button>
+              <div class="work-tags">
+                multi-channel video installation with real-time face substitution
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. How to Become Optimized Humans... (2024) -->
+          <div class="work-row" data-work-id="optimized-humans">
+            <div class="work-year">2024</div>
+            <div class="work-main">
+              <button class="work-title-button" type="button">
+                How to Become Optimized Humans:<br>
+                Observing Them All Day Without Doing Anything
+              </button>
+              <div class="work-tags">
+                multi-channel video / text / sound
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. The Easiest Escape (2023) -->
+          <div class="work-row" data-work-id="easiest-escape">
+            <div class="work-year">2023</div>
+            <div class="work-main">
+              <button class="work-title-button" type="button">
+                The Easiest Escape
+              </button>
+              <div class="work-tags">
+                video installation
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Bad Meditation (2022) -->
+          <div class="work-row" data-work-id="bad-meditation">
+            <div class="work-year">2022</div>
+            <div class="work-main">
+              <button class="work-title-button" type="button">
+                Bad Meditation
+              </button>
+              <div class="work-tags">
+                single-channel video / sound
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 상세 패널 -->
+        <div class="work-detail-panel">
+          <div class="work-detail-placeholder">
+            작업 제목을 클릭하면 여기 전체 폭으로 상세 정보와 스틸 이미지가 표시돼.
+          </div>
+
+          <!-- Unsecured Narratives 상세 (2025) -->
+          <article class="work-detail-view" data-work-detail="unsecured-narratives">
+            <div class="work-detail-header">
+              <div class="work-detail-title-row">
+                <h2>Unsecured Narratives</h2>
+                <div class="work-detail-meta">
+                  <div>2025</div>
+                  <div>multi-channel video installation</div>
+                </div>
+              </div>
+              <div class="work-detail-submeta">
+                Multi-channel video installation with real-time face substitution, color, stereo sound, variable duration
+              </div>
+            </div>
+
+            <div class="work-detail-layout">
+              <div class="work-detail-media">
+                <img src="contents/works/unsecured-narratives_1.jpg" alt="Unsecured Narratives still 1">
+                <img src="contents/works/unsecured-narratives_2.jpg" alt="Unsecured Narratives still 2">
+              </div>
+
+              <div class="work-detail-text-group">
+                <div class="work-detail-block">
+                  <h3>description (en)</h3>
+                  <p>
+                    <em>Unsecured Narratives</em> uses publicly accessible CCTV footage as raw material to
+                    construct two unstable protagonists: an older white man and a young blonde woman.
+                    None of the people in the footage actually know each other, and yet their bodies are
+                    stitched together to read as a single “character”. The installation treats these
+                    borrowed lives as an editable dataset, mirroring how networked images dissolve
+                    individual context into patterns.
+                  </p>
+                  <p>
+                    Throughout the work, subtitles and voiceovers circulate in four languages:
+                    Korean, English, German and a synthetic AI language. The text borrows the tone
+                    of productivity culture, self-help challenges and optimization slogans, promising
+                    a better life if we only follow the right script. At the same time, these lines
+                    are mismatched with the images, producing frictions, misunderstandings and
+                    moments of absurdity.
+                  </p>
+                  <p>
+                    A face substitution system continuously replaces the protagonists’ faces with the
+                    live viewer’s face. The spectator is gently pushed into the role of “subject under
+                    observation” and “ideal user” at once. Rather than offering a clear moral or a
+                    stable main character, the work keeps the narrative insecure: who is being watched,
+                    who is speaking, and who this optimized life is actually for remain unresolved.
+                  </p>
+                </div>
+
+                <div class="work-detail-block">
+                  <h3>설명 (kr)</h3>
+                  <p>
+                    <em>Unsecured Narratives</em>는 온라인에서 접근 가능한 CCTV 영상들을 수집해,
+                    두 명의 불안정한 주인공을 만들어낸다. 하나는 나이 든 백인 남성, 다른 하나는
+                    금발의 젊은 여성이다. 화면 속 인물들은 실제로 서로 아무런 관계가 없지만,
+                    편집을 통해 하나의 “캐릭터”처럼 이어 붙여진다. 이 작업에서 이들의 삶은
+                    언제든 편집 가능한 데이터셋처럼 취급되며, 네트워크 속 이미지들이 개별적인
+                    맥락을 잃고 패턴으로만 소비되는 방식을 드러낸다.
+                  </p>
+                  <p>
+                    작업 전반에는 한국어, 영어, 독일어, 그리고 AI가 생성한 언어로 된 자막과
+                    내레이션이 순환한다. 텍스트는 생산성 문화, 셀프 헬프 챌린지, 자기최적화
+                    슬로건의 어조를 빌려와 “올바른 스크립트만 따른다면 더 나은 삶을 살 수 있다”고
+                    약속한다. 동시에 이 문장들은 화면 속 장면과 어긋나며, 오해와 삐걱거림,
+                    다소 우스운 순간들을 만들어낸다.
+                  </p>
+                  <p>
+                    실시간 얼굴 치환 시스템은 두 주인공의 얼굴을 관람자의 얼굴로 계속해서 대체한다.
+                    관람자는 자연스럽게 “관찰받는 대상”이자 “이상적인 사용자”의 역할을 동시에
+                    맡게 된다. 이 작업은 뚜렷한 주인공이나 분명한 메시지를 제시하기보다는,
+                    끝까지 불안정한 상태를 유지한다. 결국 누가 누구를 바라보고 있는지,
+                    누가 말하고 있는지, 그리고 이 최적화된 삶이 실제로 누구를 위한 것인지가
+                    애매한 채로 남는다.
+                  </p>
+                </div>
+
+                <div class="work-detail-side-meta">
+                  <div><strong>languages</strong> · Korean, English, German, AI-generated language</div>
+                  <div><strong>medium</strong> · multi-channel video installation with real-time face substitution</div>
+                  <div><strong>exhibition</strong> · Graduation exhibition, HfG Karlsruhe, 2025 (예시)</div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- How to Become Optimized Humans 상세 (2024) -->
+          <article class="work-detail-view" data-work-detail="optimized-humans">
+            <div class="work-detail-header">
+              <div class="work-detail-title-row">
+                <h2>
+                  How to Become Optimized Humans:<br>
+                  Observing Them All Day Without Doing Anything
+                </h2>
+                <div class="work-detail-meta">
+                  <div>2024</div>
+                  <div>multi-channel video / text / sound</div>
+                </div>
+              </div>
+              <div class="work-detail-submeta">
+                Multi-channel HD video with subtitles and voiceover, variable installation
+              </div>
+            </div>
+
+            <div class="work-detail-layout">
+              <div class="work-detail-media">
+                <img src="contents/works/optimized-humans_1.jpg" alt="Optimized Humans still 1">
+                <img src="contents/works/optimized-humans_2.jpg" alt="Optimized Humans still 2">
+              </div>
+
+              <div class="work-detail-text-group">
+                <div class="work-detail-block">
+                  <h3>description (en)</h3>
+                  <p>
+                    This work collects motivational phrases, self-optimization tips and influencer-like
+                    instructions into a script that is never fully stable. The “optimized humans”
+                    remain off-screen: we only observe their schedules, goals and data traces,
+                    while the viewer is left with the empty task of watching and listening all day
+                    without acting.
+                  </p>
+                </div>
+
+                <div class="work-detail-block">
+                  <h3>설명 (kr)</h3>
+                  <p>
+                    이 작업은 동기부여 문구, 자기계발 조언, 인플루언서의 말투를 모아
+                    하나의 스크립트처럼 엮는다. 그러나 이 스크립트는 끝까지 안정되지 않고,
+                    “최적화된 인간들”은 화면에 직접 등장하지 않는다. 관람자는 그들의
+                    스케줄과 목표, 데이터 흔적만을 바라보며, 아무것도 하지 않은 채
+                    하루 종일 지켜보는 역할을 맡게 된다.
+                  </p>
+                </div>
+
+                <div class="work-detail-side-meta">
+                  <div><strong>medium</strong> · multi-channel video with text and sound</div>
+                  <div><strong>keywords</strong> · self-optimization, productivity, script, data</div>
+                  <div><strong>exhibited</strong> · (추후 전시 이력 추가 가능)</div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- The Easiest Escape 상세 (2023) -->
+          <article class="work-detail-view" data-work-detail="easiest-escape">
+            <div class="work-detail-header">
+              <div class="work-detail-title-row">
+                <h2>The Easiest Escape</h2>
+                <div class="work-detail-meta">
+                  <div>2023</div>
+                  <div>video installation</div>
+                </div>
+              </div>
+              <div class="work-detail-submeta">
+                2-channel video installation, color, stereo sound, variable duration
+              </div>
+            </div>
+
+            <div class="work-detail-layout">
+              <div class="work-detail-media">
+                <img src="contents/works/easiest-escape_1.jpg" alt="The Easiest Escape still 1">
+                <img src="contents/works/easiest-escape_2.jpg" alt="The Easiest Escape still 2">
+              </div>
+
+              <div class="work-detail-text-group">
+                <div class="work-detail-block">
+                  <h3>description (en)</h3>
+                  <p>
+                    <em>The Easiest Escape</em> stages a loop of small gestures of escape –
+                    scrolling, closing tabs, walking away from the screen – that never fully leave
+                    the digital frame. The installation creates a subtle choreography between two
+                    projections, hinting at the desire to disappear while being permanently
+                    recorded and tracked.
+                  </p>
+                </div>
+
+                <div class="work-detail-block">
+                  <h3>설명 (kr)</h3>
+                  <p>
+                    <em>The Easiest Escape</em>는 화면을 넘기고, 탭을 닫고, 자리에서 일어나는 등,
+                    사소한 “탈출”의 몸짓들로 이루어진 루프를 보여준다. 하지만 이 몸짓들은 끝내
+                    디지털 프레임 밖으로 나가지 못한 채, 계속해서 기록되고 추적된다.
+                    두 채널 프로젝션 사이의 미묘한 움직임은 사라지고 싶어 하면서도
+                    완전히 사라질 수 없는 상태를 암시한다.
+                  </p>
+                </div>
+
+                <div class="work-detail-side-meta">
+                  <div><strong>medium</strong> · 2-channel video installation</div>
+                  <div><strong>keywords</strong> · escape, screen, gesture, tracking</div>
+                  <div><strong>exhibited</strong> · (추후 전시 이력 추가 가능)</div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Bad Meditation 상세 (2022) -->
+          <article class="work-detail-view" data-work-detail="bad-meditation">
+            <div class="work-detail-header">
+              <div class="work-detail-title-row">
+                <h2>Bad Meditation</h2>
+                <div class="work-detail-meta">
+                  <div>2022</div>
+                  <div>single-channel video / sound</div>
+                </div>
+              </div>
+              <div class="work-detail-submeta">
+                HD video, color, stereo sound, approx. 7'
+              </div>
+            </div>
+
+            <div class="work-detail-layout">
+              <div class="work-detail-media">
+                <img src="contents/works/bad-meditation_1.jpg" alt="Bad Meditation still 1">
+                <img src="contents/works/bad-meditation_2.jpg" alt="Bad Meditation still 2">
+              </div>
+
+              <div class="work-detail-text-group">
+                <div class="work-detail-block">
+                  <h3>description (en)</h3>
+                  <p>
+                    <em>Bad Meditation</em> plays with the aesthetics of guided meditation and self-care apps,
+                    but replaces calm landscapes and inspirational text with glitchy, looping footage and
+                    instructions that never really arrive at “relaxation”. The work questions who is actually
+                    soothed by these interfaces, and who is left more anxious by their constant demands to
+                    breathe, focus and optimize.
+                  </p>
+                </div>
+
+                <div class="work-detail-block">
+                  <h3>설명 (kr)</h3>
+                  <p>
+                    <em>Bad Meditation</em>은 명상 앱과 셀프 케어 영상의 형식을 빌려오지만,
+                    잔잔한 풍경 대신 반복되고 깨지는 이미지, 쉽게 따라갈 수 없는 가이드 텍스트를 배치한다.
+                    화면 속 목소리와 문장은 끝까지 “편안한 상태”에 도달하지 못한 채,
+                    오히려 사용자의 불안과 집중 강박을 드러낸다.
+                  </p>
+                </div>
+
+                <div class="work-detail-side-meta">
+                  <div><strong>medium</strong> · single-channel HD video with sound</div>
+                  <div><strong>keywords</strong> · meditation, self-help, glitch, anxiety</div>
+                  <div><strong>exhibited</strong> · (추후 전시 이력 추가 가능)</div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact">
+      <h1>contact</h1>
+      <p>
+        이메일, 인스타 DM, 협업/커미션 문의 안내 등.<br>
+        예: <a href="mailto:hello@yerimyoo.com">hello@yerimyoo.com</a>
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-left">
+      <div class="lang-switch">
+        <span>language</span>
+        <button data-lang="en" class="active">EN</button>
+        <button data-lang="kr">KR</button>
+      </div>
+    </div>
+
+    <div class="footer-right">
+      <div class="social-links">
+        <a href="https://instagram.com/your_instagram" target="_blank" aria-label="Instagram">
+          <i class="fab fa-instagram"></i>
+        </a>
+        <a href="https://vimeo.com/your_vimeo" target="_blank" aria-label="Vimeo">
+          <i class="fab fa-vimeo-v"></i>
+        </a>
+        <a href="https://soundcloud.com/your_soundcloud" target="_blank" aria-label="SoundCloud">
+          <i class="fab fa-soundcloud"></i>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ---------- 1. 랜덤 그라데이션 색 ----------
+    (function setRandomGradient() {
+      const stored = sessionStorage.getItem("gradientColors");
+      let colors;
+
+      if (stored) {
+        colors = JSON.parse(stored);
+      } else {
+        function randomColor() {
+          const h = Math.floor(Math.random() * 360);
+          const s = 70 + Math.random() * 30;
+          const l = 65 + Math.random() * 20;
+          return `hsl(${h}, ${s}%, ${l}%)`;
+        }
+
+        colors = {
+          top: randomColor(),
+          bottom: randomColor()
+        };
+
+        sessionStorage.setItem("gradientColors", JSON.stringify(colors));
+      }
+
+      document.documentElement.style.setProperty("--grad-top", colors.top);
+      document.documentElement.style.setProperty("--grad-bottom", colors.bottom);
+    })();
+
+    const sections       = document.querySelectorAll("main section");
+    const navButtons     = document.querySelectorAll("nav button");
+    const homeButton     = document.getElementById("homeButton");
+    const worksSection   = document.getElementById("works");
+    const workListsLabel = document.getElementById("workListsLabel");
+    const worksList      = document.getElementById("worksList");
+    const worksLayout    = document.querySelector("#works .works-layout");
+
+    function showSection(id) {
+      sections.forEach(sec => {
+        sec.classList.toggle("active", sec.id === id);
+      });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+
+      if (id === "works") {
+        resetWorksToListOnly();
+        alignWorkListLabel();
+      }
+    }
+
+    // works 섹션 상태 리셋 (리스트만 보이게)
+    function resetWorksToListOnly() {
+      if (!worksSection) return;
+      worksSection.classList.remove("detail-mode");
+      worksSection.classList.add("list-only");
+
+      if (worksList) {
+        worksList.classList.remove("visible");
+        worksList.style.top = "";
+        worksList.style.left = "";
+      }
+
+      const workRows = document.querySelectorAll("#works .work-row");
+      workRows.forEach(row => row.classList.remove("active"));
+
+      const detailViews = document.querySelectorAll(".work-detail-view");
+      detailViews.forEach(view => {
+        view.style.display = "none";
+      });
+
+      const detailPlaceholder = document.querySelector(".work-detail-placeholder");
+      if (detailPlaceholder) {
+        detailPlaceholder.style.display = "block";
+      }
+    }
+
+    // ---------- 🔥 work list 세로 라벨을 초록 박스 위치에 맞추기 ----------
+    function alignWorkListLabel() {
+      if (!worksSection || !workListsLabel) return;
+      if (!worksSection.classList.contains("active")) return;
+
+      const logo = document.querySelector("header .logo");
+      const intro = document.querySelector("#works .works-intro");
+      if (!logo || !intro) return;
+
+      const logoRect  = logo.getBoundingClientRect();
+      const introRect = intro.getBoundingClientRect();
+
+      // 1차 배치: 대략적으로 교차점에 놓기
+      workListsLabel.style.left = logoRect.left + "px";
+      workListsLabel.style.top  = introRect.top + "px";
+
+      // 회전까지 포함된 실제 박스 위치 측정
+      const labelRect = workListsLabel.getBoundingClientRect();
+
+      // bounding box의 왼쪽/위가 로고/selected works와 정확히 일치하도록 보정
+      const dx = logoRect.left - labelRect.left;
+      const dy = introRect.top - labelRect.top;
+
+      workListsLabel.style.left = (logoRect.left + dx) + "px";
+      workListsLabel.style.top  = (introRect.top + dy) + "px";
+    }
+
+    // ---------- 2. 상단 nav 섹션 전환 ----------
+    navButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const targetId = btn.dataset.target;
+
+        navButtons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+
+        showSection(targetId);
+      });
+    });
+
+    homeButton.addEventListener("click", () => {
+      showSection("home");
+      navButtons.forEach(b => b.classList.remove("active"));
+    });
+
+    // ---------- 3. 언어 스위치 ----------
+    const langButtons = document.querySelectorAll(".lang-switch button");
+
+    langButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        langButtons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+
+        const lang = btn.dataset.lang;
+        document.documentElement.lang = lang;
+      });
+    });
+
+    // ---------- 4. works: 리스트 클릭 → 상세 모드 ----------
+    const workRows          = document.querySelectorAll("#works .work-row");
+    const detailViews       = document.querySelectorAll(".work-detail-view");
+    const detailPlaceholder = document.querySelector(".work-detail-placeholder");
+    let listHideTimeout     = null;
+
+    function showWorkDetail(id) {
+      if (!worksSection) return;
+
+      workRows.forEach(row => {
+        if (row.dataset.workId === id) {
+          row.classList.add("active");
+        } else {
+          row.classList.remove("active");
+        }
+      });
+
+      let found = false;
+      detailViews.forEach(view => {
+        if (view.dataset.workDetail === id) {
+          view.style.display = "block";
+          found = true;
+        } else {
+          view.style.display = "none";
+        }
+      });
+
+      if (detailPlaceholder) {
+        detailPlaceholder.style.display = found ? "none" : "block";
+      }
+
+      if (found) {
+        worksSection.classList.remove("list-only");
+        worksSection.classList.add("detail-mode");
+        if (worksList) {
+          worksList.classList.remove("visible");
+        }
+      }
+    }
+
+    workRows.forEach(row => {
+      const titleBtn = row.querySelector(".work-title-button");
+      const id = row.dataset.workId;
+      if (!id) return;
+
+      const handleClick = () => {
+        showWorkDetail(id);
+      };
+
+      row.addEventListener("click", handleClick);
+      if (titleBtn) {
+        titleBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          handleClick();
+        });
+      }
+    });
+
+    // ---------- 5. detail-mode에서 work list hover → 리스트 플로팅 ----------
+    function openWorksList() {
+  if (!worksSection || !worksList || !workListsLabel || !worksLayout) return;
+  if (!worksSection.classList.contains("detail-mode")) return;
+
+  clearTimeout(listHideTimeout);
+
+  const labelRect  = workListsLabel.getBoundingClientRect();
+  const layoutRect = worksLayout.getBoundingClientRect();
+
+  // 🔥 팝업을 "work list" 오른쪽에 붙이기
+  const top  = labelRect.top  - layoutRect.top;          // 세로 위치: 라벨의 위쪽과 맞춤
+  const left = labelRect.right - layoutRect.left + 8;    // 가로 위치: 라벨 오른쪽에 8px 띄우기
+
+  worksList.style.top  = `${top}px`;
+  worksList.style.left = `${left}px`;
+
+  worksList.classList.add("visible");
+}
+
+
+    function scheduleCloseWorksList() {
+      if (!worksSection || !worksList) return;
+      if (!worksSection.classList.contains("detail-mode")) return;
+      clearTimeout(listHideTimeout);
+      listHideTimeout = setTimeout(() => {
+        worksList.classList.remove("visible");
+      }, 150);
+    }
+
+    if (workListsLabel) {
+      workListsLabel.addEventListener("mouseenter", openWorksList);
+      workListsLabel.addEventListener("mouseleave", scheduleCloseWorksList);
+    }
+
+    if (worksList) {
+      worksList.addEventListener("mouseenter", openWorksList);
+      worksList.addEventListener("mouseleave", scheduleCloseWorksList);
+    }
+
+    // 처음 로드 & 리사이즈 시에도 위치 정렬 (works 열려 있을 때만)
+    window.addEventListener("load", alignWorkListLabel);
+    window.addEventListener("resize", alignWorkListLabel);
+  </script>
+</body>
+</html>
