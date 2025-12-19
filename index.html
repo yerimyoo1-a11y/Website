@@ -1,0 +1,1679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>YERIM YOO</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- 아이콘용 Font Awesome -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+  <!-- 폰트 -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tilt+Warp&display=swap">
+
+  <style>
+    :root {
+      --bg-gray: #dad8d7;
+      --grad-top: #ff8ac4;   /* JS에서 랜덤으로 덮어씀 */
+      --grad-bottom: #ff00ff;
+      --text-main: #111;
+      --header-height: 70px;
+      --footer-height: 60px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+      color: var(--text-main);
+      background:
+        linear-gradient(to bottom,
+          var(--grad-top) 0%,
+          var(--grad-top) 10%,
+          var(--bg-gray) 30%,
+          var(--bg-gray) 70%,
+          var(--grad-bottom) 90%,
+          var(--grad-bottom) 100%
+        );
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 상단 헤더 */
+    header {
+      height: var(--header-height);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(4px);
+    }
+
+    .logo {
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+
+      font-family: "Tilt Warp", system-ui, -apple-system, sans-serif;
+      font-size: 48px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      line-height: 1;
+
+      display: flex;
+      align-items: center;
+
+      color: rgba(0, 0, 0, 0);
+      -webkit-text-stroke: 1.4px #000;
+
+      transform: scaleY(0.8);
+      transform-origin: bottom left;
+    }
+
+    .logo:hover {
+      opacity: 0.8;
+    }
+
+    nav {
+      display: flex;
+      gap: 24px;
+      font-size: 17px;
+      text-transform: lowercase;
+      letter-spacing: 0.06em;
+    }
+
+    nav button {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font: inherit;
+      padding: 4px 0 2px;
+      position: relative;
+    }
+
+    nav button::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -3px;
+      width: 0;
+      height: 1px;
+      background: #000;
+      transition: width 0.2s ease-out;
+    }
+
+    nav button:hover::after,
+    nav button.active::after {
+      width: 100%;
+    }
+
+    /* 메인 컨텐츠 */
+    main {
+      flex: 1;
+      padding: 20px 4vw 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+    }
+
+    section {
+      display: none;
+      max-width: 960px;
+      width: 100%;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    section.active {
+      display: block;
+    }
+
+    /* ===== 홈 화면: 자동 슬라이드 ===== */
+    #home {
+      margin-top: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .home-slide-wrapper {
+      max-width: 1440px;
+      width: 100%;
+      padding: 0 16px;
+    }
+
+    .home-slide {
+      width: 100%;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      display: inline-block;
+    }
+
+    .home-slide-image-frame {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #000;
+      overflow: hidden;
+    }
+
+    .home-slide-image-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .home-slide-caption {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    .home-slide-title {
+      font-weight: 500;
+      text-align: left;
+    }
+
+    .home-slide-year {
+      font-size: 12px;
+      text-transform: uppercase;
+      opacity: 0.8;
+    }
+
+    .home-hint {
+      margin-top: 8px;
+      font-size: 11px;
+      opacity: 0.7;
+    }
+
+    /* CV */
+    section h1 {
+      font-size: 26px;
+      margin-bottom: 16px;
+      text-transform: lowercase;
+    }
+
+    section p {
+      line-height: 1.5;
+      font-size: 15px;
+    }
+    
+    /* ===== CV 섹션 전용 타이포 & 레이아웃 ===== */
+
+/* CV 섹션 안쪽 여백/폭 조정 */
+#cv {
+  width: min(90vw, 1400px);  /* #works와 동일한 규칙 */
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+/* cv 제목 아래 가로선 (work list 선과 맞추기) */
+#cv-divider {
+  
+  margin-top: 4px;
+  margin-bottom: 24px;
+  width: 100%;                    /* #cv의 폭만큼 가로로 쫙 */
+}
+
+#cv .cv-inner {
+  max-width: 640px;     /* 텍스트 줄 길이 줄이기 */
+  margin: 0 auto 40px;  /* 가운데 정렬 + 아래 여백 */
+}
+
+/* CV 메인 타이틀 (cv) */
+#cv > h1 {
+  font-size: 26px;
+  margin-bottom: 20px;
+  text-transform: lowercase;
+}
+
+/* 한/영 블록 공통 */
+.cv-lang {
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* 한 블록 끝나고 다음 언어 블록 시작할 때 구분 */
+.cv-lang + .cv-lang {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(0, 0, 0, 0.18);
+}
+
+/* 이름 라인 */
+.cv-lang h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+/* 일반 문단 */
+.cv-lang p {
+  margin-bottom: 6px;       /* 문단 사이 아주 살짝 여백 */
+}
+
+/* 소제목 (Bio / Education / Selected Exhibitions 등) */
+.cv-lang h3 {
+  font-size: 14px;
+  font-weight: 700;         /* 볼드 */
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  margin-top: 28px;
+  margin-bottom: 10px;
+}
+
+/* 작은 화면에서 조금 더 여유 */
+@media (max-width: 640px) {
+  #cv .cv-inner {
+    max-width: 100%;
+  }
+
+  .cv-lang {
+    font-size: 13px;
+    line-height: 1.75;
+  }
+
+  .cv-lang h2 {
+    font-size: 18px;
+  }
+}
+
+
+    /* === works: work list + 리스트/상세 === */
+    #works {
+      margin-top: 20px;
+      width: min(90vw, 1400px);
+      max-width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .works-header-line {
+      position: relative;
+      height: 0;
+      z-index: 6;
+    }
+
+    #workListsLabel {
+      font-size: 26px;
+      text-transform: lowercase;
+      cursor: pointer;
+
+      position: fixed;
+      left: 0;
+      top: 0;
+
+      padding: 0px 10px;
+      border-radius: 0px;
+
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+
+      line-height: 1;
+      background: rgba(255, 255, 255, 0.0);
+
+      transform: rotate(-90deg);
+      transform-origin: left top;
+
+      transition:
+        background 0.18s ease-out,
+        box-shadow 0.18s ease-out,
+        opacity 0.18s ease-out;
+    }
+
+    .work-list-icon {
+      font-size: 1.1em;
+      transition: transform 0.18s ease-out, opacity 0.18s ease-out;
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    #works.detail-mode .work-list-icon {
+      opacity: 0.85;
+      visibility: visible;
+    }
+
+    #works.detail-mode #workListsLabel:hover {
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow:
+        0 4px 10px rgba(0, 0, 0, 0.16),
+        0 0 0 1px rgba(0, 0, 0, 0.06);
+    }
+
+    #works.detail-mode #workListsLabel:hover::after {
+      width: 100%;
+    }
+
+    #works.detail-mode #workListsLabel:hover .work-list-icon {
+      transform: rotate(180deg);
+      opacity: 1;
+    }
+
+    .works-intro {
+      font-size: 13px;
+      margin-bottom: 14px;
+      line-height: 1.4;
+    }
+
+    .works-layout {
+      position: relative;
+      margin: 0 auto;
+    }
+
+    .works-list {
+      margin-top: 37px;
+      border-top: 1px solid #111;
+      padding-top: 4px;
+      background: transparent;
+    }
+
+    .work-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 8px 0 10px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.45);
+      cursor: pointer;
+    }
+
+    .work-row.active {
+      background: rgba(255, 255, 255, 0.7);
+    }
+
+    .work-year {
+      width: 54px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding-top: 4px;
+      flex-shrink: 0;
+    }
+
+    .work-main {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .work-title-button {
+      background: none;
+      border: none;
+      padding: 0;
+      margin: 0;
+      cursor: pointer;
+      font-size: 15px;
+      text-align: left;
+      text-transform: none;
+    }
+
+    .work-title-button:hover {
+      text-decoration: underline;
+    }
+
+    .work-tags {
+      font-size: 12px;
+      opacity: 0.8;
+      margin-top: 3px;
+    }
+
+    .work-detail-panel {
+      margin-top: 26px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .work-detail-placeholder {
+      font-size: 13px;
+      opacity: 0.8;
+      border-top: 1px solid #111;
+      padding-top: 10px;
+    }
+
+    .work-detail-view {
+      display: none;
+    }
+
+    .work-detail-header {
+      border-bottom: 1px solid #111;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+
+    .work-detail-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .work-detail-title-row h2 {
+      margin: 0;
+      font-size: 22px;
+      text-transform: none;
+    }
+
+    .work-detail-meta {
+      text-align: right;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .work-detail-meta div + div {
+      margin-top: 2px;
+    }
+
+    .work-detail-submeta {
+      font-size: 13px;
+      margin-top: 6px;
+      opacity: 0.9;
+    }
+
+    .work-detail-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+      gap: 24px;
+      align-items: flex-start;
+    }
+
+    .work-detail-media {
+      display: flex;
+      flex-direction: column;
+      gap: 60px;
+    }
+
+    .work-detail-media img {
+      width: 100%;
+      height: auto;
+      display: block;
+      background: #000;
+      object-fit: cover;
+    }
+
+    .work-image {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .work-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+      background: #000;
+      object-fit: cover;
+    }
+
+    .work-image figcaption {
+      font-size: 11px;
+      line-height: 1.4;
+      margin-top: 4px;
+      opacity: 0.7;
+    }
+
+
+    .work-detail-text-group {
+      font-size: 14px;
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .work-detail-text-group h3 {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+    }
+
+    .work-detail-block p + p {
+      margin-top: 16px;
+    }
+
+    .work-detail-side-meta {
+      font-size: 12px;
+      opacity: 0.9;
+    }
+    .work-detail-side-meta .credits-heading {
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      margin-bottom: 6px;
+    }
+
+
+    .work-detail-side-meta div + div {
+      margin-top: 4px;
+    }
+
+    #works.list-only .work-detail-panel {
+      display: none;
+    }
+
+    #works.detail-mode .work-detail-panel {
+      display: block;
+    }
+
+    #works.detail-mode .works-list {
+      position: absolute;
+      min-width: 320px;
+      background: rgba(250, 250, 250, 0.97);
+      border: 1px solid #111;
+      padding: 8px 12px 10px;
+      box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.25),
+        0 0 0 1px rgba(0, 0, 0, 0.08);
+      display: none;
+      z-index: 5;
+      margin-top: 0;
+      padding-top: 8px;
+      border-top-width: 1px;
+    }
+
+    #works.detail-mode .works-list.visible {
+      display: block;
+    }
+
+    @media (max-width: 900px) {
+      .work-detail-layout {
+        grid-template-columns: 1fr;
+      }
+      .work-detail-meta {
+        text-align: left;
+      }
+
+      #works {
+        padding-left: 0;
+      }
+
+      #workListsLabel {
+        position: static;
+        transform: none;
+        transform-origin: initial;
+        font-size: 26px;
+        padding: 0;
+        border-radius: 0;
+        margin-bottom: 8px;
+      }
+
+      #works.detail-mode .works-list {
+        min-width: 0;
+        max-width: none;
+        right: 0;
+      }
+
+      #home {
+        margin-top: 20px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      header {
+        padding: 0 16px;
+      }
+      main {
+        padding: 16px;
+      }
+      footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+      .footer-right {
+        width: 100%;
+        justify-content: space-between;
+      }
+    }
+
+    /* 푸터 */
+    footer {
+      height: var(--footer-height);
+      padding: 10px 32px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+    }
+
+    .lang-switch {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      font-size: 13px;
+    }
+
+    .lang-switch button {
+      min-width: 40px;
+      height: 28px;
+      border-radius: 999px;
+      border: 1px solid #000;
+      background: rgba(255,255,255,0.85);
+      cursor: pointer;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .lang-switch button.active {
+      background: #000;
+      color: #fff;
+    }
+
+    .footer-left {
+      display: flex;
+      align-items: center;
+    }
+
+    .footer-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .social-links a {
+      margin-left: 12px;
+      font-size: 20px;
+      text-decoration: none;
+      color: #000;
+    }
+
+    .social-links a:hover {
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo" id="homeButton">YERIM&nbsp;YOO</div>
+
+    <nav>
+      <button data-target="cv">cv</button>
+      <button data-target="works">works</button>
+      <button data-target="contact">contact</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- 홈: 자동 슬라이드 -->
+    <section id="home" class="active">
+      <div class="home-slide-wrapper">
+        <button id="homeSlideButton" class="home-slide" type="button">
+          <div class="home-slide-image-frame">
+            <img
+              id="homeSlideImage"
+              src=""
+              alt="work slide"
+            >
+          </div>
+          <div class="home-slide-caption">
+            <span id="homeSlideTitle" class="home-slide-title"></span>
+            <span id="homeSlideYear" class="home-slide-year"></span>
+          </div>
+        </button>
+
+
+      </div>
+    </section>
+
+    <!-- CV -->
+<section id="cv">
+  <h1>cv</h1>
+
+  <div class="cv-inner">
+    <!-- 🇰🇷 한국어 버전 -->
+    <div class="cv-lang" data-lang-block="kr">
+      <h2>유예림 (Yerim Yoo)</h2>
+      <p>1995년 경기도 출생. 칼스루에 기반의 미디어아티스트.</p>
+
+      <h3>소개 (Bio)</h3>
+      <p>
+        유예림은 디지털 환경에서 개인이 어떻게 해석되고 분류되며, 그 과정 속에서 무엇을 느끼고 어떻게 살아남는지를 탐구한다. 감시 기술과 자동화된 판단 시스템이 인간의 경험과 정체성에 미치는 영향을 비판적으로 다루며, 게임, 인터랙티브 설치, 영상 등 다양한 매체를 통해 기술적 시선과 인간 사이에서 발생하는 긴장과 오해를 시각화한다.
+      </p>
+      
+
+      <h3>학력 (Education)</h3>
+      <p>
+        Diplom, Hochschule für Gestaltung Karlsruhe (HfG Karlsruhe), 2025<br>
+        전공: Medienkunst
+      </p>
+
+      <h3>전시 (Selected Exhibitions)</h3>
+      <p>2024 — art KARLSRUHE After Party, P8 Karlsruhe, Germany</p>
+      <p>2022 — rOundabOut2022, Kinemathek Karlsruhe, Germany</p>
+    </div>
+
+    <!-- 🇬🇧 영어 버전 -->
+    <div class="cv-lang" data-lang-block="en">
+      <h2>Yerim Yoo</h2>
+      <p>Born in 1995 in Gyeonggi-do, based in Karlsruhe. Media artist.</p>
+
+      <h3>Bio</h3>
+      <p>
+        Yerim Yoo examines how individuals are interpreted, classified, and affected within digital environments. Her work focuses on the impact of surveillance technologies and automated decision-making systems on human experience and identity. Through games, interactive installations, and video, she visualizes the tensions and misreadings that emerge between technological ways of seeing and lived human reality.
+      </p>
+      
+
+      <h3>Education</h3>
+      <p>
+        Diplom, Hochschule für Gestaltung Karlsruhe (HfG Karlsruhe), 2025<br>
+        Major: Medienkunst (Media Art)
+      </p>
+
+      <h3>Selected Exhibitions</h3>
+      <p>2024 — art KARLSRUHE After Party, P8 Karlsruhe, Germany</p>
+      <p>2022 — rOundabOut2022, Kinemathek Karlsruhe, Germany</p>
+    </div>
+  </div>
+</section>
+
+
+
+
+    <!-- WORKS -->
+    <section id="works" class="list-only">
+      <!-- 세로 work list 라벨 -->
+      <div class="works-header-line">
+        <h1 id="workListsLabel">
+          work list
+          <span class="work-list-icon">▾</span>
+        </h1>
+      </div>
+
+      <p class="works-intro"></p>
+
+      <div class="works-layout">
+        <!-- 리스트 -->
+        <div class="works-list" id="worksList">
+          <div class="work-row" data-work-id="unsecured-narratives">
+            <div class="work-year">2025</div>
+            <div class="work-main">
+              <button class="work-title-button" type="button">
+                Unsecured Narratives
+              </button>
+              <div class="work-tags">
+                video installation with real-time face substitution system
+              </div>
+            </div>
+          </div>
+
+          <div class="work-row" data-work-id="optimized-humans">
+            <div class="work-year">2024</div>
+            <div class="work-main">
+              <button class="work-title-button" type="button">
+                How to Become Optimized Humans:<br>
+                Observing Them All Day Without Doing Anything
+              </button>
+              <div class="work-tags">
+                video installation with real-time face tracking
+              </div>
+            </div>
+          </div>
+
+          <div class="work-row" data-work-id="easiest-escape">
+            <div class="work-year">2023</div>
+            <div class="work-main">
+              <button class="work-title-button" type="button">
+                The Easiest Escape
+              </button>
+              <div class="work-tags">
+                game
+              </div>
+            </div>
+          </div>
+
+          <div class="work-row" data-work-id="bad-meditation">
+            <div class="work-year">2022</div>
+            <div class="work-main">
+              <button class="work-title-button" type="button">
+                Bad Meditation
+              </button>
+              <div class="work-tags">
+                audiovisual
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 상세 패널 -->
+                <!-- 상세 패널 -->
+        <div class="work-detail-panel">
+          <div class="work-detail-placeholder">
+            작업 제목을 클릭하면 여기 전체 폭으로 상세 정보와 스틸 이미지가 표시돼.
+          </div>
+
+          <!-- Unsecured Narratives 상세 (2025) -->
+          <article class="work-detail-view" data-work-detail="unsecured-narratives">
+            <div class="work-detail-header">
+              <div class="work-detail-title-row">
+                <h2>Unsecured Narratives</h2>
+                <div class="work-detail-meta">
+                  <div>2025</div>
+                  <div>video installation with real-time face substitution system</div>
+                </div>
+              </div>
+              <div class="work-detail-submeta">
+                video installation with real-time face substitution; 4-channel sound; approx. 21'33"
+              </div>
+            </div>
+
+            <div class="work-detail-layout">
+              <div class="work-detail-media">
+                <img src="contents/works/Unsecured_Narratives/1.png" alt="Unsecured Narratives still 1">
+                <img src="contents/works/Unsecured_Narratives/2.png" alt="Unsecured Narratives still 2">
+                <img src="contents/works/Unsecured_Narratives/3.png" alt="Unsecured Narratives still 3">
+                <figure class="work-image">
+                  <img src="contents/works/Unsecured_Narratives/4.jpg" alt="Unsecured Narratives still 4">
+                  <figcaption>© 2025 Minhee Oh</figcaption>
+                </figure>
+              </div>
+
+              <div class="work-detail-text-group">
+                <!-- EN -->
+                <div class="work-detail-block" data-lang-block="en">
+                  <h3>description</h3>
+                  <p>
+                    <em>Unsecured Narratives</em> begins with the question: “Why do we feel anxiety in the digital age?” 
+                    We live with the constant presence of surveillance, exposure of information, and unstable identities. 
+                    Even without a concrete threat, there is a persistent sense of being watched and of our private lives 
+                    leaking somewhere we cannot see. This anxiety is not only personal, but a structural experience 
+                    produced by digital society.
+                  </p>
+                  <p>
+                    The work uses publicly accessible CCTV streams (insecam) as its raw material. With Contacam software, 
+                    only the moments with detected motion are automatically recorded and collected into a database, 
+                    spanning different locations and times. From this footage, people are re-grouped by similar appearance 
+                    and atmosphere, and the two largest clusters—“old white man” and “blonde woman”—are chosen to build 
+                    two separate videos, each with a single seeming protagonist.
+                  </p>
+                  <p>
+                    In reality, each “protagonist” is composed of many different individuals. They live in different cities 
+                    and appear at different times, but through repetition of similar clothing, gestures and camera angles, 
+                    the editing makes them look like one continuous person going through an ordinary day. What the viewer 
+                    encounters is not a documentary portrait, but a composite <strong>fake identity</strong> assembled from 
+                    fragments of other people’s lives, showing how easily images and information can be recombined and 
+                    misread in digital environments.
+                  </p>
+                  <p>
+                    Each of the two videos has four narrative versions: Korean, English, German, and an AI-generated one. 
+                    The human-written texts were created by native speakers who freely wrote their own stories after 
+                    watching the footage, while the AI version comes from a non-human, algorithmic voice. The same material 
+                    thus produces very different emotions and interpretations, and the AI narrative introduces a third 
+                    perspective that resembles human language yet deviates from it in subtle ways.
+                  </p>
+                  <p>
+                    Subtitles and voiceovers appear at random positions on the four sides of the screen (top, bottom, left, 
+                    right). Colors, typography and effects shift with each playback, and the audio is split into four channels 
+                    mapped to the subtitle positions in space. Each viewing becomes a different mix of languages, layouts and 
+                    sound fields. For many viewers, their native language stands out clearly, while the others sink into 
+                    background noise—revealing how even “shared” information is always filtered through position, familiarity 
+                    and bias.
+                  </p>
+                  <p>
+                    When no one stands in front of the screen, all faces in the footage are blacked out and no identities 
+                    are visible. As soon as a viewer approaches and their face is detected, every face in the video is 
+                    replaced with theirs. The people they were watching suddenly become versions of themselves, and the 
+                    viewer shifts from observer to observed. This real-time flip in visibility points to how fragile the 
+                    boundaries of image ownership, identity and gaze have become in networked systems.
+                  </p>
+                  <p>
+                    <em>Unsecured Narratives</em> asks how, in an age of overflowing data, the borders between reality and 
+                    fiction, meaning and noise, truth and manipulation are eroding. It invites viewers to confront questions 
+                    such as: “How real is what I see and believe?” and “Are my identity and my data truly mine?”
+                  </p>
+                </div>
+
+                <!-- KR -->
+                <div class="work-detail-block" data-lang-block="kr">
+                <h3>설명</h3>
+
+                <p>
+                  <em>Unsecured Narratives</em>는 “디지털 시대에 우리는 왜 불안을 느끼는가?”라는 질문에서 출발한 작업이다. 
+                  오늘날 우리는 감시와 정보 노출, 정체성의 불안정 속에서 살아가며, 구체적인 피해가 없어도 누군가 나를 보고 있을지 모른다는 감각, 
+                  사생활이 어딘가에서 흘러가고 있을 것 같은 막연한 불안을 일상적으로 경험한다. 이러한 불안은 개인적 감정을 넘어 
+                  디지털 사회가 만들어낸 구조적이고 집단적인 경험이다.
+                </p>
+
+                <p>
+                  작업은 전 세계에서 실시간으로 송출되는 공개 CCTV 스트림(insecam.org)을 기반으로 한다. 
+                  다양한 장소와 시간대에서 수집한 영상을 하나의 데이터베이스로 구축한 뒤, 화면 속 인물들을 
+                  외형적 특징과 옷차림에 따라 재분류했다. 이후 가장 많은 영상이 모인 두 정체성—‘old white man’과 
+                  ‘blonde woman’—을 선택해, 각각 하나의 주인공을 가진 두 개의 독립된 영상으로 구성했다.
+                </p>
+
+                <p>
+                  각 영상 속 ‘주인공’은 실제로는 여러 명의 서로 다른 사람들이다. 서로 다른 도시와 시간대의 전혀 다른 개인들이지만, 
+                  이들의 순간들이 이어 붙여지며 마치 한 사람이 하루를 살아가는 것처럼 보이도록 구성되었다. 실제 인물은 존재하지 않지만, 
+                  영상 속에서는 실재처럼 보이는 <strong>합성된 정체성(fake identity)</strong>이 만들어지며, 이는 디지털 환경에서 이미지와 
+                  정보가 얼마나 쉽게 재조합되고 오해될 수 있는지를 드러낸다.
+                </p>
+
+                <p>
+                  두 영상에는 한국어, 영어, 독일어, 그리고 AI가 생성한 텍스트까지 총 네 가지 내러티브가 존재한다. 
+                  한국어·영어·독일어 버전은 각 언어를 모국어로 사용하는 참여자들에게 영상을 보여주고, 
+                  그들이 느낀 인상과 해석을 바탕으로 서사를 작성하도록 하여 제작되었다. 
+                  AI 버전은 동일한 영상을 비인간적 관점에서 ‘읽어내도록’ 한 결과물로, 인간의 언어 구조를 닮았으면서도 
+                  다른 방식으로 이야기를 구성한다.
+                </p>
+
+                <p>
+                  이 내러티브들은 매번 영상이 재생될 때마다 화면의 네 방향(상·하·좌·우)에 무작위로 나타나고, 
+                  폰트·색상·효과 또한 지속적으로 변한다. 오디오는 자막 위치에 따라 네 방향으로 분리되어 재생되며, 
+                  관객은 매번 다른 언어적·시각적·공간적 조합을 마주하게 된다. 자신의 언어는 명확히 들리지만 나머지 언어는 
+                  배경음처럼 들리는 경험은, 동일한 정보도 각자의 위치·배경·관심에 따라 편파적으로 해석됨을 보여준다.
+                </p>
+
+                <p>
+                  또한 화면 앞에 관객이 서지 않을 때는 영상 속 모든 얼굴이 블랙아웃되어 신원이 숨겨진다. 
+                  하지만 누군가 다가와 얼굴이 인식되는 순간, 영상 속 모든 얼굴은 즉시 그 관람객의 얼굴로 치환된다. 
+                  타인을 바라보던 장면이 곧바로 자신의 얼굴로 대체되며, 관객은 한순간에 ‘관찰자’에서 ‘관찰되는 존재’로 전환된다. 
+                  이 기술적 구조는 감시와 노출의 권력이 실시간으로 뒤집히는 경험을 만들어내며, 
+                  이미지의 소유, 시선의 주체, 정체성의 경계가 얼마나 쉽게 흔들릴 수 있는지를 드러낸다.
+                </p>
+
+                <p>
+                  <em>Unsecured Narratives</em>는 정보가 과잉된 시대에 실제와 허구, 의미와 진실의 경계가 얼마나 불안정해지는지를 질문한다. 
+                  작품은 관객이 스스로에게 묻도록 유도한다. “내가 보고 믿는 정보는 어디까지 진짜인가?” 
+                  “나의 정체성과 나의 데이터는 정말 ‘내 것’일 수 있는가?”
+                </p>
+
+              </div>
+
+
+                <div class="work-detail-side-meta">
+                  <h3 class="credits-heading">credits</h3>
+                  <div> Fonts · Nayeon Park and Sunmi Kim</div>
+                  <div>
+                  Narratives ·   
+                    KR: Sora Kim, Namsong Han / 
+                    EN: Chloe Lee, Alex / 
+                    DE: Finn Milbrandt, Jiaxuan He
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- How to Become Optimized Humans 상세 (2024) -->
+          <article class="work-detail-view" data-work-detail="optimized-humans">
+            <div class="work-detail-header">
+              <div class="work-detail-title-row">
+                <h2>
+                  How to Become Optimized Humans:<br>
+                  Observing Them All Day Without Doing Anything
+                </h2>
+                <div class="work-detail-meta">
+                  <div>2024</div>
+                  <div>video installation with real-time audience tracking</div>
+                </div>
+              </div>
+              <div class="work-detail-submeta">
+                video installation with 3D-animated characters and real-time audience tracking
+              </div>
+            </div>
+
+            <div class="work-detail-layout">
+              <div class="work-detail-media">
+                <img src="contents/works/How_to_be_Optimized_Human/1.JPG" alt="Optimized Humans still 1">
+                <img src="contents/works/How_to_be_Optimized_Human/2.JPG" alt="Optimized Humans still 2">
+                <img src="contents/works/How_to_be_Optimized_Human/3.JPG" alt="Optimized Humans still 3">
+              </div>
+
+              <div class="work-detail-text-group">
+                <!-- EN -->
+                <div class="work-detail-block" data-lang-block="en">
+                  <h3>description</h3>
+                  <p>
+                  This work begins from observing how routines and self-optimization discourses have come to dominate everyday life. Both online and offline, we are continually exposed to the demand to organize, manage, and constantly update ourselves according to ever-shifting standards. Practices that initially seemed like healthy habits soon become new frameworks—and new forms of pressure.
+                  </p>
+
+                  <p>
+                  The spread of lifestyle challenges such as the “Clean Girl Aesthetic,” the “Millionaire Routine,” and the “Miracle Morning” illustrates how individual lives are increasingly aligned toward a standardized ideal of the “optimized human.” This raises an essential question: when such norms solidify into everyday expectations, what becomes of individuality and genuine happiness?
+                  </p>
+
+                  <p>
+                  The introduction of artificial intelligence complicates this landscape even further. AI processes vast amounts of information and provides instant answers, yet it also makes it increasingly difficult to distinguish what is truly “real,” or which decisions arise from our own intuition. In response to this contradiction, the artist asked ChatGPT to generate “the most ideal daily routine for self-optimization,” and created an animation in which identical characters mechanically perform this AI-generated routine.
+                  </p>
+
+                  <p>
+                  Inside the exhibition space, a webcam tracks visitors’ faces, and all characters repeat the routine in synchronized timing while continuously following the viewer with their gaze. Their synchronized movements and persistent stare exert a quiet pressure, producing the impression of asking: “Why aren’t you living the way we are?”
+                  </p>
+
+                  <p>
+                  By constructing a situation in which the viewer watches the screen while the screen simultaneously watches back, the work visualizes the psychological tension of contemporary life: the endless production and consumption of information, societal demands to become a “better self,” and the reality of ultimately conforming to yet another external standard.
+                  </p>
+
+                </div>
+
+                <!-- KR -->
+                <div class="work-detail-block" data-lang-block="kr">
+                  <h3>설명</h3>
+                  <p>
+                이 작업은 ‘더 나은 나’를 향한 루틴과 자기최적화 담론이 일상을 지배하는 오늘의 환경에서 출발한다. 
+                온라인과 오프라인을 가리지 않고 우리는 자신을 정리하고, 관리하고, 최신 기준에 맞춰 끊임없이 갱신해야 한다는 요구에 노출된다. 
+                처음에는 건강한 습관처럼 보였던 실천들조차 곧 하나의 틀이자 새로운 압박으로 기능하게 된다.
+                </p>
+
+                <p>
+                ‘클린 걸 에스테틱’, ‘백만장자 루틴’, ‘미라클 모닝’과 같은 라이프스타일 챌린지들이 확산되고, 
+                개인의 삶이 점점 획일화된 ‘이상적인 인간상’에 따라 정렬되는 현상은 중요한 질문을 제기한다. 
+                이러한 기준이 일상의 규범으로 굳어질 때, 개성과 행복은 어디에 남을 수 있는가?
+                </p>
+
+                <p>
+                여기에 인공지능의 등장은 문제를 더욱 복잡하게 만든다. 
+                AI는 방대한 정보를 처리하고 즉각적인 답변을 제공하지만, 
+                우리는 점점 ‘무엇이 진짜인지’, ‘어떤 판단이 내 감각에서 비롯된 것인지’를 구분하기 어려워진다. 
+                이러한 모순을 기반으로, 작가는 ChatGPT에 ‘자기 최적화를 위한 가장 이상적인 하루 루틴’을 요청했고, 
+                그 결과를 바탕으로 동일한 캐릭터들이 기계적으로 루틴을 수행하는 애니메이션을 제작했다.
+                </p>
+
+                <p>
+                전시장에는 웹캠이 설치되어 있으며, 모든 캐릭터들은 영상 속 루틴을 싱크에 맞춰 반복하면서도 
+                지속적으로 관람객의 시선을 따라간다. 
+                캐릭터들의 응시는 관람객에게 조용한 압박을 가하며, 
+                “왜 너는 우리의 방식대로 살지 않는가?”라는 질문을 던지는 듯한 효과를 만든다.
+                </p>
+
+                <p>
+                작품은 관람자가 화면을 바라보는 동시에, 화면 또한 관람자를 응시하는 구조를 통해 현대적 압박감을 시각화한다. 
+                끊임없이 생산·소비되는 정보, 사회가 요구하는 ‘더 나은 나’의 기준, 그리고 결국 또 다른 규범을 따르게 되는 현실을 드러낸다.
+                </p>
+
+                </div>
+
+              
+              </div>
+            </div>
+          </article>
+
+          <!-- The Easiest Escape 상세 (2023) -->
+          <article class="work-detail-view" data-work-detail="easiest-escape">
+            <div class="work-detail-header">
+              <div class="work-detail-title-row">
+                <h2>The Easiest Escape</h2>
+                <div class="work-detail-meta">
+                  <div>2023</div>
+                  <div>game</div>
+                </div>
+              </div>
+              <div class="work-detail-submeta">
+                interactive multi-room game installation; digital video output, stereo sound
+              </div>
+            </div>
+
+            <div class="work-detail-layout">
+              <div class="work-detail-media">
+                <img src="contents/works/The_Easiest_Escape/1.png" alt="The Easiest Escape still 1">
+                <img src="contents/works/The_Easiest_Escape/2.png" alt="The Easiest Escape still 2">
+                <img src="contents/works/The_Easiest_Escape/4.png" alt="The Easiest Escape still 4">
+                <img src="contents/works/The_Easiest_Escape/5.png" alt="The Easiest Escape still 5">
+              </div>
+
+              <div class="work-detail-text-group">
+                <!-- EN -->
+                <div class="work-detail-block" data-lang-block="en">
+                  <h3>description</h3>
+                  <p>
+                    <em>The Easiest Escape</em> is a four-room game project created in response to the overwhelming information overload, the constant pressure of self-optimization, and the anxiety that permeates contemporary digital life. Across online and offline environments, we are repeatedly urged to update, improve, and streamline ourselves. This relentless demand for productivity dulls our senses and makes it increasingly difficult to determine where our attention should truly rest. The work visualizes this condition of “too much” through four symbolic rooms.
+                  </p>
+                  <p>
+                    The first room, the Light Room, begins with a completely white screen. Guided only by the subtle white noise of the lighting system, the player clicks aimlessly, gradually turning off the lights one by one. As the brightness recedes, the shape of the space and its exit finally become visible. This room suggests an irony: excessive information and excessive positivity can, in fact, obscure our vision, and clarity emerges only when unnecessary “brightness” is reduced.
+                  </p>
+                  <p>
+                    In the second room, dozens of TTS-generated motivational quotes echo simultaneously, forming an overwhelming sonic environment. Amid this noise, the player must follow the faint breathing sound, and the closer they get, the more the rapid breath slows and stabilizes, and an exit appears. The room metaphorically reflects how external “answers” and “encouragements”—especially those demanding constant self-improvement—can erase individual sensibilities. True escape becomes possible only when one returns to their own rhythm.
+                  </p>
+                  <p>
+                    The third room consists of a maze with no exit. Its walls continuously play YouTube videos surfaced by the search phrase “Where is the exit?”. Simply navigating the maze offers no way out; instead, the player must pause the videos themselves, causing the walls to momentarily become transparent and allowing passage. This mechanism reflects how an overflow of unchosen, algorithmically delivered content can disorient us, and how only through pausing—interrupting the flow—can a new pathway appear.
+                  </p>
+                  <p>
+                    The final Cursor Room is filled with countless fake cursors. The viewer must identify the single functioning cursor and use it to complete a questionnaire about “happiness.” The room prompts the player to question what can truly be chosen amid the constant flood of options and expectations—and whether those choices can genuinely be their own.
+                  </p>
+                  <p>
+                    Taken together, The Easiest Escape proposes a pathway for reclaiming one’s senses amid the pressure generated by excess—of information, noise, content, and choice. The work suggests that escape is not achieved through more action or better answers, but through the recovery of a quieter ability to pause, look, and listen.
+                  </p>
+                </div>
+
+                <!-- KR -->
+                <div class="work-detail-block" data-lang-block="kr">
+                  <h3>설명</h3>
+                  <p>
+                    <em>The Easiest Escape</em>는 디지털 시대의 과도한 정보, 끊임없는 자기최적화 압박, 그리고 그 속에서 발생하는 불안을 바탕으로 제작된 네 개의 방으로 구성된 게임 프로젝트이다. 온라인과 오프라인을 넘나들며 요구되는 끝없는 갱신과 생산성의 논리는 개인의 감각을 마비시키고, 집중해야 할 방향조차 흐릿하게 만든다. 이 작업은 그러한 ‘지나침’의 감각을 네 개의 상징적 방을 통해 드러낸다.
+                  </p>
+                  <p>
+                    첫 번째 방인 조명 방은 처음에는 아무것도 보이지 않는 하얀 화면으로 시작된다. 관람자는 조명의 백색소음을 힌트로 무작위로 마우스를 클릭하며 빛을 하나씩 끄게 되고, 조명이 점점 줄어들면 비로소 공간의 형태와 출구가 드러난다. 이는 과도한 정보와 긍정의 밝기가 오히려 시야를 가릴 수 있으며, 감각을 회복하기 위해서는 불필요한 긍정을 줄여야 한다는 역설적 메시지를 담고 있다.
+                  </p>
+                  <p>
+                    두 번째 방에서는 수십 개의 TTS 음성이 자기계발 문구를 동시에 외치며 소음처럼 울려 퍼진다. 혼란스러운 음향 속에서 관람자는 미세한 숨소리를 따라가야만 하고, 그 숨소리에 가까워지면 가쁜 숨소리가 안정되고, 출구가 나타난다. 외부의 ‘정답’과 ‘격려’는 실제로는 개인의 특성을 지워버릴 수 있으며, 진정한 탈출은 자기 자신의 리듬을 회복할 때 가능하다는 점을 은유한다.
+                  </p>
+                  <p>
+                    세 번째 방은 출구 없는 미로로 구성되어 있으며, 미로의 벽은 ‘Where is the exit?’의 검색 결과로 표시되는 유튜브 영상들을 연속적으로 재생한다. 이 미로는 단순히 길을 따라가서는 탈출할 수 없고, 영상 재생을 직접 멈춰야만 벽이 잠시 투명해지며 통과할 수 있다. 이는 넘쳐나는, 직접 선택하지 않은 콘텐츠에 휘둘릴 때 방향을 잃게 되는 현대인의 경험을 반영하며, ‘멈춤(Pause)’을 통해서만 비로소 새로운 길이 열린다는 점을 제시한다.
+                  </p>
+                  <p>
+                    마지막 커서 방에서는 수많은 가짜 커서들이 화면을 가득 메우고, 관람자는 그중 오직 하나뿐인 실제 커서를 찾아 ‘행복’을 묻는 설문을 완수해야 한다. 끊임없이 주어지는 선택지와 기준 속에서 우리는 무엇을 선택할 수 있으며, 그 선택이 정말 ‘나의 것’일 수 있는지 다시 묻게 하는 구성이다.
+                  </p>
+                  <p>
+                    전체적으로 The Easiest Escape는 정보, 소음, 콘텐츠, 선택의 과잉이 만들어내는 압박 속에서 관람자가 스스로의 감각을 되찾는 과정을 제안한다. 진짜 탈출은 더 많은 행동이나 더 나은 정답에서 오는 것이 아니라, 잠시 멈추고 바라보고 듣는 감각의 회복에서 시작된다는 메시지를 담고 있다.
+                  </p>
+                </div>
+
+                
+              </div>
+            </div>
+          </article>
+
+          <!-- Bad Meditation 상세 (2022) -->
+          <article class="work-detail-view" data-work-detail="bad-meditation">
+            <div class="work-detail-header">
+              <div class="work-detail-title-row">
+                <h2>Bad Meditation</h2>
+                <div class="work-detail-meta">
+                  <div>2022</div>
+                  <div>audiovisual</div>
+                </div>
+              </div>
+              <div class="work-detail-submeta">
+                sound-reactive audiovisual work; stereo sound; 7'21"
+              </div>
+            </div>
+
+            <div class="work-detail-layout">
+              <div class="work-detail-media">
+                <img src="contents/works/Bad_Meditation/1.png" alt="Bad Meditation still 1">
+                <img src="contents/works/Bad_Meditation/2.png" alt="Bad Meditation still 2">
+                <img src="contents/works/Bad_Meditation/3.png" alt="Bad Meditation still 3">
+                <img src="contents/works/Bad_Meditation/4.png" alt="Bad Meditation still 4">
+              </div>
+
+              <div class="work-detail-text-group">
+                <!-- EN -->
+                <div class="work-detail-block" data-lang-block="en">
+                  <h3>description</h3>
+                  <p>
+                    <em>Bad Meditation</em> begins with the idea of a meditation that does not quite succeed. The work emerges from the attempt to find stillness—and realizing that when I try to become quiet, my thoughts often become even noisier. Having grown up in an environment that normalized competition, productivity, and constant self-improvement, I internalized the pressure to remain active and optimized at all times. However, when the COVID pandemic began and the pace of social life suddenly slowed, external activities came to a halt. I was forced into a state of stillness—and within that stillness, the tension and restlessness I carried became even more pronounced. This uncomfortable state between wanting to pause and being unable to do so forms the core of the work.
+                  </p>
+                  <p>
+                    <em>Bad Meditation</em> translates this inner conflict into a structure of sound and visuals across three segments.The first segment begins quietly, with diffused, mist-like sounds that attempt to settle the mind. In the second segment, this attempt collapses. The audio becomes louder, more unstable, and increasingly chaotic—reflecting the friction between the desire to slow down and the ingrained habit of acceleration. The final segment occupies an in-between state, neither fully calm nor fully chaotic. It is an imperfect moment of pausing, a brief attempt to remain present even within discomfort.
+                  </p>
+                  <p>
+                    The visual structure is based on the image of <i>time</i>. Multiple clock hands appear, each linked to a specific sound in the piece. Their brightness and movement change according to the dynamics of the audio, visualizing the idea that true stillness may require experiencing time directly rather than trying to control it.
+                  </p>
+                  <p>
+                    Rather than presenting meditation as a path to perfect tranquility, <em>Bad Meditation</em> records the tension, awkwardness, and small attempts at rest that occur within the process of trying to be still. It is a form of meditation that acknowledges misalignment, accepts unease, and follows one’s own internal rhythm rather than external expectations.
+                  </p>
+                </div>
+                
+                <!-- KR -->
+                <div class="work-detail-block" data-lang-block="kr">
+                  <h3>설명</h3>
+                  <p>
+                    <em>Bad Meditation</em>은 말 그대로 ‘좋지 않은 명상’에서 출발한다. 이 작업은 고요해지려는 순간 오히려 더 시끄러워지는 마음, 멈추고자 할 때 더욱 선명해지는 불안을 탐구하며 시작되었다. 바쁘게 움직여야만 안심할 수 있는 리듬 속에서 살아오며, 나는 생산성과 효율을 기준으로 자신을 끊임없이 최적화해야 한다는 압박을 자연스럽게 내면화해 왔다. 그러나 코로나 펜데믹이 시작되면서 사회적 속도가 멈추고, 외부의 활동이 중단되자, 나는 강제로 정적 속에 머물게 되었고—그 속에서 내 안에 남아 있던 긴장과 산만함이 오히려 더 크게 드러났다. 고요는 편안함이 아니라 오히려 낯설고 어색한 상태였고, 그 불편함을 마주하는 과정이 이 작품의 출발점이 되었다.
+                  </p>
+                  <p>
+                    <em>Bad Meditation</em>은 이러한 내적 긴장을 사운드와 비주얼의 구조로 번역한다. 작품은 세 개의 구간으로 구성되어 있으며, 고요를 시도하는 과정에서 벌어지는 변화들을 단계적으로 보여준다. 첫 번째 구간은 잔잔하게 공간에 깔리는 소리와 함께 조용히 시작된다. 안개처럼 퍼지는 음향 속에서 마음을 가라앉히려는 시도가 이어진다. 두 번째 구간에서는 그 고요가 무너진다. 소리는 점점 더 거칠어지고 예측 불가능해지며, 질서가 흐트러진다. 이는 멈추려는 의지와 다시 속도를 올리려는 습관이 충돌하는 순간의 불안을 반영한다. 마지막 구간은 소란과 고요 사이, 어딘가 불완전한 중간 지점에 머무르려는 시도다. 완전히 편안하다고 느낄 수는 없지만, 잠시나마 머물며 숨을 고르고자 하는 시간이다.
+                  </p>
+                  <p>
+                    비주얼은 ‘시간’의 이미지에서 출발한다. 여러 개의 시계 바늘이 등장하며, 각 바늘은 특정 사운드에 연결되어 있고, 음향의 변화에 따라 움직임과 밝기가 달라진다. 고요를 유지하기 위해 시간을 통과하는 경험 자체에 집중해야 한다는 아이디어를 시각화한 것이다.
+                  </p>
+                  <p>
+                    <em>Bad Meditation</em>은 완벽한 평온을 제시하는 명상이 아니라, 고요함을 시도하는 과정에서 느껴지는 불안과 모순, 그리고 그 사이에 잠시 머물고자 하는 마음을 기록한 작업이다. 타인의 기준이나 사회적 속도가 아니라, 내 안의 리듬과 감각을 따라가려는 불완전한 명상의 형태를 보여준다.
+                  </p>
+
+                </div>
+                <p>
+                  <strong>soundtrack</strong> · 
+                  <a href="https://soundcloud.com/ga_mi/bad-meditation" target="_blank">
+                    listen on SoundCloud
+                  </a>
+                </p>
+
+                
+              </div>
+            </div>
+          </article>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact">
+      <h1>contact</h1>
+      <p>
+        <a href="mailto:yerimyoo1@gmail.com">yerimyoo1@gmail.com</a>
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-left">
+      <div class="lang-switch">
+        <span>language</span>
+        <button data-lang="en" class="active">EN</button>
+        <button data-lang="kr">KR</button>
+      </div>
+    </div>
+
+    <div class="footer-right">
+      <div class="social-links">
+        <a href="https://www.instagram.com/yeeeeeerim_/" target="_blank" aria-label="Instagram">
+          <i class="fab fa-instagram"></i>
+
+        </a>
+        <a href="https://soundcloud.com/ga_mi" target="_blank" aria-label="SoundCloud">
+          <i class="fab fa-soundcloud"></i>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ---------- 1. 랜덤 그라데이션 색 ----------
+    (function setRandomGradient() {
+      const stored = sessionStorage.getItem("gradientColors");
+      let colors;
+
+      if (stored) {
+        colors = JSON.parse(stored);
+      } else {
+        function randomColor() {
+          const h = Math.floor(Math.random() * 360);
+          const s = 70 + Math.random() * 30;
+          const l = 65 + Math.random() * 20;
+          return `hsl(${h}, ${s}%, ${l}%)`;
+        }
+
+        colors = {
+          top: randomColor(),
+          bottom: randomColor()
+        };
+
+        sessionStorage.setItem("gradientColors", JSON.stringify(colors));
+      }
+
+      document.documentElement.style.setProperty("--grad-top", colors.top);
+      document.documentElement.style.setProperty("--grad-bottom", colors.bottom);
+    })();
+
+    const sections       = document.querySelectorAll("main section");
+    const navButtons     = document.querySelectorAll("nav button");
+    const homeButton     = document.getElementById("homeButton");
+    const worksSection   = document.getElementById("works");
+    const workListsLabel = document.getElementById("workListsLabel");
+    const worksList      = document.getElementById("worksList");
+    const worksLayout    = document.querySelector("#works .works-layout");
+
+    function showSection(id) {
+      sections.forEach(sec => {
+        sec.classList.toggle("active", sec.id === id);
+      });
+
+      // 홈 섹션일 때만 슬라이드 쇼를 표시하고, 다른 섹션에선 숨기기
+      const homeSlideWrapper = document.querySelector(".home-slide-wrapper");
+      if (homeSlideWrapper) {
+        homeSlideWrapper.style.display = id === "home" ? "block" : "none";
+      }
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+
+      if (id === "works") {
+        resetWorksToListOnly();
+        alignWorkListLabel();
+      }
+    }
+
+    function resetWorksToListOnly() {
+      if (!worksSection) return;
+      worksSection.classList.remove("detail-mode");
+      worksSection.classList.add("list-only");
+
+      if (worksList) {
+        worksList.classList.remove("visible");
+        worksList.style.top = "";
+        worksList.style.left = "";
+      }
+
+      const workRows = document.querySelectorAll("#works .work-row");
+      workRows.forEach(row => row.classList.remove("active"));
+
+      const detailViews = document.querySelectorAll(".work-detail-view");
+      detailViews.forEach(view => {
+        view.style.display = "none";
+      });
+
+      const detailPlaceholder = document.querySelector(".work-detail-placeholder");
+      if (detailPlaceholder) {
+        detailPlaceholder.style.display = "block";
+      }
+    }
+
+    function alignWorkListLabel() {
+      if (!worksSection || !workListsLabel) return;
+      if (!worksSection.classList.contains("active")) return;
+
+      const logo = document.querySelector("header .logo");
+      const intro = document.querySelector("#works .works-intro");
+      if (!logo || !intro) return;
+
+      const logoRect  = logo.getBoundingClientRect();
+      const introRect = intro.getBoundingClientRect();
+
+      workListsLabel.style.left = logoRect.left + "px";
+      workListsLabel.style.top  = introRect.top + "px";
+
+      const labelRect = workListsLabel.getBoundingClientRect();
+
+      const dx = logoRect.left - labelRect.left;
+      const dy = introRect.top - labelRect.top;
+
+      workListsLabel.style.left = (logoRect.left + dx) + "px";
+      workListsLabel.style.top  = (introRect.top + dy) + "px";
+    }
+
+    // ---------- 2. 상단 nav 섹션 전환 ----------
+    navButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const targetId = btn.dataset.target;
+
+        navButtons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+
+        showSection(targetId);
+      });
+    });
+
+    homeButton.addEventListener("click", () => {
+      showSection("home");
+      navButtons.forEach(b => {
+        b.classList.toggle("active", b.dataset.target === "home");
+      });
+    });
+
+    // ---------- 3. 언어 스위치 ----------
+    // ---------- 3. 언어 스위치 ----------
+    // ---------- 3. 언어 스위치 ----------
+const langButtons = document.querySelectorAll(".lang-switch button");
+
+function setLanguage(lang) {
+  // <html lang="..."> 설정
+  document.documentElement.lang = lang;
+
+  // EN / KR 버튼 스타일 변경
+  langButtons.forEach(b => {
+    b.classList.toggle("active", b.dataset.lang === lang);
+  });
+
+  // data-lang-block 가진 텍스트 블럭 토글
+  const langBlocks = document.querySelectorAll("[data-lang-block]");
+    langBlocks.forEach(el => {
+      const blockLang = el.getAttribute("data-lang-block");
+      el.style.display = (blockLang === lang) ? "" : "none";
+    });
+  }
+
+  // 버튼 클릭 시 언어 변경
+  langButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const lang = btn.dataset.lang; // "en" 또는 "kr"
+      setLanguage(lang);
+    });
+  });
+
+  // 페이지 처음 로드될 때 기본 언어 설정 (EN 기준)
+  setLanguage("en");
+
+
+    // ---------- 4. works: 리스트 클릭 → 상세 모드 ----------
+    const workRows          = document.querySelectorAll("#works .work-row");
+    const detailViews       = document.querySelectorAll(".work-detail-view");
+    const detailPlaceholder = document.querySelector(".work-detail-placeholder");
+    let listHideTimeout     = null;
+
+    function showWorkDetail(id) {
+      if (!worksSection) return;
+
+      workRows.forEach(row => {
+        if (row.dataset.workId === id) {
+          row.classList.add("active");
+        } else {
+          row.classList.remove("active");
+        }
+      });
+
+      let found = false;
+      detailViews.forEach(view => {
+        if (view.dataset.workDetail === id) {
+          view.style.display = "block";
+          found = true;
+        } else {
+          view.style.display = "none";
+        }
+      });
+
+      if (detailPlaceholder) {
+        detailPlaceholder.style.display = found ? "none" : "block";
+      }
+
+      if (found) {
+        worksSection.classList.remove("list-only");
+        worksSection.classList.add("detail-mode");
+        if (worksList) {
+          worksList.classList.remove("visible");
+        }
+      }
+    }
+
+    workRows.forEach(row => {
+      const titleBtn = row.querySelector(".work-title-button");
+      const id = row.dataset.workId;
+      if (!id) return;
+
+      const handleClick = () => {
+        showWorkDetail(id);
+      };
+
+      row.addEventListener("click", handleClick);
+      if (titleBtn) {
+        titleBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          handleClick();
+        });
+      }
+    });
+
+    // ---------- 5. detail-mode에서 work list hover → 리스트 플로팅 ----------
+    function openWorksList() {
+      if (!worksSection || !worksList || !workListsLabel || !worksLayout) return;
+      if (!worksSection.classList.contains("detail-mode")) return;
+
+      clearTimeout(listHideTimeout);
+
+      const labelRect  = workListsLabel.getBoundingClientRect();
+      const layoutRect = worksLayout.getBoundingClientRect();
+
+      const top  = labelRect.top  - layoutRect.top;
+      const left = labelRect.right - layoutRect.left + 8;
+
+      worksList.style.top  = `${top}px`;
+      worksList.style.left = `${left}px`;
+
+      worksList.classList.add("visible");
+    }
+
+    function scheduleCloseWorksList() {
+      if (!worksSection || !worksList) return;
+      if (!worksSection.classList.contains("detail-mode")) return;
+      clearTimeout(listHideTimeout);
+      listHideTimeout = setTimeout(() => {
+        worksList.classList.remove("visible");
+      }, 150);
+    }
+
+    if (workListsLabel) {
+      workListsLabel.addEventListener("mouseenter", openWorksList);
+      workListsLabel.addEventListener("mouseleave", scheduleCloseWorksList);
+    }
+
+    if (worksList) {
+      worksList.addEventListener("mouseenter", openWorksList);
+      worksList.addEventListener("mouseleave", scheduleCloseWorksList);
+    }
+
+    window.addEventListener("load", alignWorkListLabel);
+    window.addEventListener("resize", alignWorkListLabel);
+
+    // ---------- 6. 홈 자동 슬라이드 쇼 (폴더 이름 + count만 써서 이미지 만들기) ----------
+    const homeSlideButton = document.getElementById("homeSlideButton");
+    const homeSlideImage  = document.getElementById("homeSlideImage");
+    const homeSlideTitle  = document.getElementById("homeSlideTitle");
+    const homeSlideYear   = document.getElementById("homeSlideYear");
+
+    // 여기서 "파일명을 하나하나 쓰는" 대신,
+    // 폴더 + 확장자 + 몇 장 있는지만 적어두고,
+    // JS가 1..count 를 돌면서 경로를 만들어서 씀.
+    const worksConfigForHome = [
+      {
+        detailId: "unsecured-narratives",
+        title: "Unsecured Narratives",
+        year: "2025",
+        folder: "contents/works/Unsecured_Narratives",
+        ext: "png",
+        count: 2  // 1.png ~ 2.png
+      },
+      {
+        detailId: "optimized-humans",
+        title: "How to Become Optimized Humans: Observing Them All Day Without Doing Anything",
+        year: "2024",
+        folder: "contents/works/How_to_be_Optimized_Human",
+        ext: "JPG",
+        count: 1  // 1.JPG
+      },
+      {
+        detailId: "easiest-escape",
+        title: "The Easiest Escape",
+        year: "2023",
+        folder: "contents/works/The_Easiest_Escape",
+        ext: "png",
+        count: 2  // 1.png ~ 2.png
+      },
+      {
+        detailId: "bad-meditation",
+        title: "Bad Meditation",
+        year: "2022",
+        folder: "contents/works/Bad_Meditation",
+        ext: "png",
+        count: 2  // 1.png ~ 2.png
+      }
+    ];
+
+    // 위 config를 실제 이미지 배열로 확장
+    const worksForHome = worksConfigForHome.map(w => {
+      const images = [];
+      for (let i = 1; i <= w.count; i++) {
+        images.push(`${w.folder}/${i}.${w.ext}`);
+      }
+      return {
+        detailId: w.detailId,
+        title: w.title,
+        year: w.year,
+        images
+      };
+    }).filter(w => w.images.length > 0);
+
+    let shuffledWorkOrder = [];
+    let currentWorkIndex  = 0;
+    let currentImageIndex = 0;
+
+    function shuffleWorks() {
+      shuffledWorkOrder = worksForHome.slice();
+      for (let i = shuffledWorkOrder.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffledWorkOrder[i], shuffledWorkOrder[j]] =
+          [shuffledWorkOrder[j], shuffledWorkOrder[i]];
+      }
+      currentWorkIndex  = 0;
+      currentImageIndex = 0;
+    }
+
+    function renderHomeSlide() {
+      if (!shuffledWorkOrder.length || !homeSlideImage) return;
+
+      const work  = shuffledWorkOrder[currentWorkIndex];
+      const image = work.images[currentImageIndex];
+
+      homeSlideImage.src = image;
+      homeSlideImage.alt = work.title;
+      homeSlideTitle.textContent = work.title;
+      homeSlideYear.textContent  = work.year;
+
+      if (homeSlideButton) {
+        homeSlideButton.dataset.workId = work.detailId;
+      }
+    }
+
+    function goToNextSlide() {
+      if (!shuffledWorkOrder.length) return;
+
+      const work = shuffledWorkOrder[currentWorkIndex];
+
+      currentImageIndex++;
+
+      if (currentImageIndex >= work.images.length) {
+        currentImageIndex = 0;
+        currentWorkIndex++;
+
+        if (currentWorkIndex >= shuffledWorkOrder.length) {
+          shuffleWorks();
+        }
+      }
+
+      renderHomeSlide();
+    }
+
+    // 초기화
+    if (worksForHome.length > 0) {
+      shuffleWorks();
+      renderHomeSlide();
+
+      const HOME_SLIDE_INTERVAL = 4000; // 4초마다 변경
+      setInterval(goToNextSlide, HOME_SLIDE_INTERVAL);
+    }
+
+    // 슬라이드 클릭 → works 상세로 이동
+    if (homeSlideButton) {
+      homeSlideButton.addEventListener("click", () => {
+        const id = homeSlideButton.dataset.workId;
+        if (!id) return;
+
+        // nav에서 works 활성화
+        navButtons.forEach(b => {
+          b.classList.toggle("active", b.dataset.target === "works");
+        });
+
+        // works 섹션 보여주기
+        showSection("works");
+
+        // 해당 작업 상세 열기
+        showWorkDetail(id);
+      });
+    }
+  </script>
+</body>
+</html>
