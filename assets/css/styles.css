@@ -1,0 +1,671 @@
+:root {
+      --bg-gray: #dad8d7;
+      --grad-top: #ff8ac4;   /* JS에서 랜덤으로 덮어씀 */
+      --grad-bottom: #ff00ff;
+      --text-main: #111;
+      --header-height: 70px;
+      --footer-height: 60px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+      color: var(--text-main);
+      background:
+        linear-gradient(to bottom,
+          var(--grad-top) 0%,
+          var(--grad-top) 10%,
+          var(--bg-gray) 30%,
+          var(--bg-gray) 70%,
+          var(--grad-bottom) 90%,
+          var(--grad-bottom) 100%
+        );
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 상단 헤더 */
+    header {
+      height: var(--header-height);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(4px);
+    }
+
+    .logo {
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+
+      font-family: "Tilt Warp", system-ui, -apple-system, sans-serif;
+      font-size: 48px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      line-height: 1;
+
+      display: flex;
+      align-items: center;
+
+      color: rgba(0, 0, 0, 0);
+      -webkit-text-stroke: 1.4px #000;
+
+      transform: scaleY(0.8);
+      transform-origin: bottom left;
+    }
+
+    .logo:hover {
+      opacity: 0.8;
+    }
+
+    nav {
+      display: flex;
+      gap: 24px;
+      font-size: 17px;
+      text-transform: lowercase;
+      letter-spacing: 0.06em;
+    }
+
+    nav button {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font: inherit;
+      padding: 4px 0 2px;
+      position: relative;
+    }
+
+    nav button::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -3px;
+      width: 0;
+      height: 1px;
+      background: #000;
+      transition: width 0.2s ease-out;
+    }
+
+    nav button:hover::after,
+    nav button.active::after {
+      width: 100%;
+    }
+
+    /* 메인 컨텐츠 */
+    main {
+      flex: 1;
+      padding: 20px 4vw 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+    }
+
+    section {
+      display: none;
+      max-width: 960px;
+      width: 100%;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    section.active {
+      display: block;
+    }
+
+    /* ===== 홈 화면: 자동 슬라이드 ===== */
+    #home {
+      margin-top: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .home-slide-wrapper {
+      max-width: 1440px;
+      width: 100%;
+      padding: 0 16px;
+    }
+
+    .home-slide {
+      width: 100%;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      display: inline-block;
+    }
+
+    .home-slide-image-frame {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #000;
+      overflow: hidden;
+    }
+
+    .home-slide-image-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .home-slide-caption {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    .home-slide-title {
+      font-weight: 500;
+      text-align: left;
+    }
+
+    .home-slide-year {
+      font-size: 12px;
+      text-transform: uppercase;
+      opacity: 0.8;
+    }
+
+    .home-hint {
+      margin-top: 8px;
+      font-size: 11px;
+      opacity: 0.7;
+    }
+
+ :root{
+  --page-column: 720px;   /* cv/contact 동일 폭 */
+  --page-gap: 40px;
+  --site-width: min(90vw, 1400px);  /* ✅ works의 컨테이너 폭을 전 페이지 기준으로 */
+  
+}
+
+/* CV / CONTACT 공통 레이아웃 */
+.page--text{
+  max-width: none;
+  width: var(--site-width);   /* ✅ works랑 동일한 폭 */
+  margin: 0 auto;             /* ✅ works랑 동일하게 가운데 컨테이너 */
+  padding-left: 0;            /* ✅ 추가 오프셋 제거 (정확히 맞추려면 0) */
+}
+
+
+.page--text .page__inner{
+  max-width: var(--page-column);
+  margin: 0;          /* main의 left padding 기준으로 왼쪽 정렬 */
+}
+
+.page--text .page__title{
+  font-size: 26px;
+  margin: 0 0 16px;
+  text-transform: lowercase;
+}
+
+.page--text .page__content{
+  margin: 0 0 var(--page-gap);
+}
+
+/* CV 언어 블록 (EN/KR 공통) */
+.lang-block{
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.lang-block + .lang-block{
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(0, 0, 0, 0.18);
+}
+
+
+
+.lang-block h2{
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.lang-block p{
+  margin-bottom: 6px;
+}
+
+.lang-block h3{
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  margin-top: 28px;
+  margin-bottom: 10px;
+}
+
+/* contact */
+.contact-email a{
+  text-decoration: none;
+  color: inherit;
+}
+.contact-email a:hover{
+  text-decoration: underline;
+}
+
+/* mobile */
+@media (max-width: 640px){
+  .page--text .page__inner{
+    max-width: 100%;
+  }
+  .lang-block{
+    font-size: 13px;
+    line-height: 1.75;
+  }
+  .lang-block h2{
+    font-size: 18px;
+  }
+}
+
+
+
+    /* === works: work list + 리스트/상세 === */
+    #works{
+  margin-top: 20px;
+  width: var(--site-width);     /* ✅ 공통 컨테이너 폭 */
+  max-width: none;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+    .works-header-line {
+      position: relative;
+      height: 0;
+      z-index: 6;
+    }
+
+    /* ✅ work list = cv/contact 타이틀과 완전 동일하게 (회전/고정/JS정렬 제거) */
+#workListsLabel{
+  position: static;
+  transform: none;
+  transform-origin: initial;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  font-size: 26px;
+  line-height: 1;
+  text-transform: lowercase;
+  letter-spacing: 0;     /* ✅ 자간 통일 */
+  padding: 0;
+  margin: 0 0 16px;      /* ✅ cv/contact 타이틀과 동일한 하단 여백 */
+  cursor: pointer;
+  background: transparent;
+}
+
+
+    .work-list-icon {
+      font-size: 1.1em;
+      transition: transform 0.18s ease-out, opacity 0.18s ease-out;
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    #works.detail-mode .work-list-icon {
+      opacity: 0.85;
+      visibility: visible;
+    }
+
+    #works.detail-mode #workListsLabel:hover {
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow:
+        0 4px 10px rgba(0, 0, 0, 0.16),
+        0 0 0 1px rgba(0, 0, 0, 0.06);
+    }
+
+    #works.detail-mode #workListsLabel:hover::after {
+      width: 100%;
+    }
+
+    #works.detail-mode #workListsLabel:hover .work-list-icon {
+      transform: rotate(180deg);
+      opacity: 1;
+    }
+
+    .works-intro {
+      font-size: 13px;
+      margin-bottom: 14px;
+      line-height: 1.4;
+    }
+
+    .works-layout {
+      position: relative;
+      margin: 0 auto;
+    }
+
+    .works-list {
+      margin-top: 37px;
+      border-top: 1px solid #111;
+      padding-top: 4px;
+      background: transparent;
+    }
+
+    .work-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 8px 0 10px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.45);
+      cursor: pointer;
+    }
+
+    .work-row.active {
+      background: rgba(255, 255, 255, 0.7);
+    }
+
+    .work-year {
+      width: 54px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding-top: 4px;
+      flex-shrink: 0;
+    }
+
+    .work-main {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .work-title-button {
+      background: none;
+      border: none;
+      padding: 0;
+      margin: 0;
+      cursor: pointer;
+      font-size: 15px;
+      text-align: left;
+      text-transform: none;
+    }
+
+    .work-title-button:hover {
+      text-decoration: underline;
+    }
+
+    .work-tags {
+      font-size: 12px;
+      opacity: 0.8;
+      margin-top: 3px;
+    }
+
+    .work-detail-panel {
+      margin-top: 26px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .work-detail-placeholder {
+      font-size: 13px;
+      opacity: 0.8;
+      border-top: 1px solid #111;
+      padding-top: 10px;
+    }
+
+    .work-detail-view {
+      display: none;
+    }
+
+    .work-detail-header {
+      border-bottom: 1px solid #111;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+
+    .work-detail-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .work-detail-title-row h2 {
+      margin: 0;
+      font-size: 22px;
+      text-transform: none;
+    }
+
+    .work-detail-meta {
+      text-align: right;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .work-detail-meta div + div {
+      margin-top: 2px;
+    }
+
+    .work-detail-submeta {
+      font-size: 13px;
+      margin-top: 6px;
+      opacity: 0.9;
+    }
+
+    .work-detail-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+      gap: 24px;
+      align-items: flex-start;
+    }
+
+    .work-detail-media {
+      display: flex;
+      flex-direction: column;
+      gap: 60px;
+    }
+
+    .work-detail-media img {
+      width: 100%;
+      height: auto;
+      display: block;
+      background: #000;
+      object-fit: cover;
+    }
+
+    .work-image {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .work-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+      background: #000;
+      object-fit: cover;
+    }
+
+    .work-image figcaption {
+      font-size: 11px;
+      line-height: 1.4;
+      margin-top: 4px;
+      opacity: 0.7;
+    }
+
+
+    .work-detail-text-group {
+      font-size: 14px;
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .work-detail-text-group h3 {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+    }
+
+    .work-detail-block p + p {
+      margin-top: 16px;
+    }
+
+    .work-detail-side-meta {
+      font-size: 12px;
+      opacity: 0.9;
+    }
+    .work-detail-side-meta .credits-heading {
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      margin-bottom: 6px;
+    }
+
+
+    .work-detail-side-meta div + div {
+      margin-top: 4px;
+    }
+
+    #works.list-only .work-detail-panel {
+      display: none;
+    }
+
+    #works.detail-mode .work-detail-panel {
+      display: block;
+    }
+
+    #works.detail-mode .works-list {
+      position: absolute;
+      min-width: 320px;
+      background: rgba(250, 250, 250, 0.97);
+      border: 1px solid #111;
+      padding: 8px 12px 10px;
+      box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.25),
+        0 0 0 1px rgba(0, 0, 0, 0.08);
+      display: none;
+      z-index: 5;
+      margin-top: 0;
+      padding-top: 8px;
+      border-top-width: 1px;
+    }
+
+    #works.detail-mode .works-list.visible {
+      display: block;
+    }
+
+    @media (max-width: 900px) {
+      .work-detail-layout {
+        grid-template-columns: 1fr;
+      }
+      .work-detail-meta {
+        text-align: left;
+      }
+
+      #works {
+        padding-left: 0;
+      }
+
+      #workListsLabel {
+        position: static;
+        transform: none;
+        transform-origin: initial;
+        font-size: 26px;
+        padding: 0;
+        border-radius: 0;
+        margin-bottom: 8px;
+      }
+
+      #works.detail-mode .works-list {
+        min-width: 0;
+        max-width: none;
+        right: 0;
+      }
+
+      #home {
+        margin-top: 20px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      header {
+        padding: 0 16px;
+      }
+      main {
+        padding: 16px;
+      }
+      footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+      .footer-right {
+        width: 100%;
+        justify-content: space-between;
+      }
+    }
+
+    /* 푸터 */
+    footer {
+      height: var(--footer-height);
+      padding: 10px 32px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+    }
+
+    .lang-switch {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      font-size: 13px;
+    }
+
+    .lang-switch button {
+      min-width: 40px;
+      height: 28px;
+      border-radius: 999px;
+      border: 1px solid #000;
+      background: rgba(255,255,255,0.85);
+      cursor: pointer;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .lang-switch button.active {
+      background: #000;
+      color: #fff;
+    }
+
+    .footer-left {
+      display: flex;
+      align-items: center;
+    }
+
+    .footer-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .social-links a {
+      margin-left: 12px;
+      font-size: 20px;
+      text-decoration: none;
+      color: #000;
+    }
+
+    .social-links a:hover {
+      opacity: 0.7;
+    }
