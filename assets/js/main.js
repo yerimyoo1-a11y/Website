@@ -296,6 +296,42 @@ function setLanguage(lang) {
       }
     ];
 
+    // ---------- 7. TEXTS (심플 버전) ----------
+const textButtons = document.querySelectorAll("#texts .text-title-button");
+const textsList   = document.getElementById("textsList");
+const textsDetail = document.getElementById("textsDetail");
+const backToTexts = document.getElementById("backToTexts");
+const textViews   = document.querySelectorAll("#texts [data-text-detail]");
+
+if (textButtons.length) {
+
+  textButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+
+      const id = btn.dataset.textId;
+
+      textViews.forEach(view => {
+        view.style.display =
+          view.dataset.textDetail === id
+            ? "block"
+            : "none";
+      });
+
+      if (textsList) textsList.style.display = "none";
+      if (textsDetail) textsDetail.style.display = "block";
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  });
+
+  if (backToTexts) {
+    backToTexts.addEventListener("click", () => {
+      if (textsList) textsList.style.display = "block";
+      if (textsDetail) textsDetail.style.display = "none";
+    });
+  }
+}
+
     // 위 config를 실제 이미지 배열로 확장
     const worksForHome = worksConfigForHome.map(w => {
       const images = [];
