@@ -584,6 +584,72 @@
       display: block;
     }
 
+    #texts .texts-detail p + p {
+  margin-top: 16px;
+}
+
+#texts .texts-detail h2 {
+  margin-bottom: 24px;
+}
+
+      .texts-list{
+  border-top:1px solid #111;
+  margin-top:20px;
+}
+.texts-detail {
+  display: none;
+}
+.text-item{
+  padding:12px 0;
+  border-bottom:1px solid rgba(0,0,0,0.4);
+}
+
+.text-title-button{
+  border:none;
+  background:none;
+  padding:0;
+  font-size:15px;
+  cursor:pointer;
+  text-align:left;
+}
+
+
+.text-title-button:hover{
+  text-decoration:underline;
+}
+
+
+
+#backToTexts{
+  border:none;
+  background:none;
+  font-size:13px;
+  margin-bottom:20px;
+  cursor:pointer;
+  opacity:0.7;
+}
+
+
+#backToTexts:hover{
+  opacity:1;
+}
+
+ /* TEXTS MODE */
+
+#texts.list-only .texts-detail-panel {
+  display: none;
+}
+
+#texts.detail-mode .texts-detail-panel {
+  display: block;
+}
+
+.text-detail-view {
+  display: none;
+}
+
+
+
     @media (max-width: 1300px) {
         .works-header-line{
     height: auto;   /* ✅ 모바일에서는 0 높이 해제 */
@@ -619,55 +685,6 @@
   display: inline;
 }
 
-
-      .texts-list{
-  border-top:1px solid #111;
-  margin-top:20px;
-}
-.texts-detail {
-  display: none;
-}
-.text-item{
-  padding:12px 0;
-  border-bottom:1px solid rgba(0,0,0,0.4);
-}
-
-.text-title-button{
-  border:none;
-  background:none;
-  padding:0;
-  font-size:15px;
-  cursor:pointer;
-  text-align:left;
-}
-
-
-.text-title-button:hover{
-  text-decoration:underline;
-}
-#texts .text-detail p + p {
-  margin-top: 16px;
-}
-
-#texts .text-detail h2 {
-  margin-bottom: 24px;
-}
-
-
-
-#backToTexts{
-  border:none;
-  background:none;
-  font-size:13px;
-  margin-bottom:20px;
-  cursor:pointer;
-  opacity:0.7;
-}
-
-
-#backToTexts:hover{
-  opacity:1;
-}
 
 
       #home {
@@ -781,24 +798,4 @@
     }
 
 
-    /* TEXTS MODE */
-
-#texts.list-only .texts-detail-panel {
-  display: none;
-}
-
-#texts.detail-mode .texts-detail-panel {
-  display: block;
-}
-
-.text-detail-view {
-  display: none;
-}
-
-#texts .text-detail-view p + p {
-  margin-top: 16px;
-}
-
-#texts .text-detail-view h2 {
-  margin-bottom: 24px;
-}
+   
