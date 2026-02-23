@@ -296,41 +296,7 @@ function setLanguage(lang) {
       }
     ];
 
-    // ---------- 7. TEXTS (심플 버전) ----------
-const textButtons = document.querySelectorAll("#texts .text-title-button");
-const textsList   = document.getElementById("textsList");
-const textsDetail = document.getElementById("textsDetail");
-const backToTexts = document.getElementById("backToTexts");
-const textViews   = document.querySelectorAll("#texts [data-text-detail]");
 
-if (textButtons.length) {
-
-  textButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-
-      const id = btn.dataset.textId;
-
-      textViews.forEach(view => {
-        view.style.display =
-          view.dataset.textDetail === id
-            ? "block"
-            : "none";
-      });
-
-      if (textsList) textsList.style.display = "none";
-      if (textsDetail) textsDetail.style.display = "block";
-
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    });
-  });
-
-  if (backToTexts) {
-    backToTexts.addEventListener("click", () => {
-      if (textsList) textsList.style.display = "block";
-      if (textsDetail) textsDetail.style.display = "none";
-    });
-  }
-}
 
     // 위 config를 실제 이미지 배열로 확장
     const worksForHome = worksConfigForHome.map(w => {
@@ -423,3 +389,79 @@ if (textButtons.length) {
         showWorkDetail(id);
       });
     }
+
+    /* =========================
+   TEXTS (안정 버전)
+========================= */
+
+const textsSection = document.getElementById("texts");
+
+const textButtons = document.querySelectorAll(".text-title-button");
+const textDetails = document.querySelectorAll(".texts-detail");
+const backButtons = document.querySelectorAll("#backToTexts");
+
+// 처음엔 리스트만 보이게
+function resetTextsToList() {
+  if (!textsSection) return;
+
+  textsSection.classList.remove("detail-mode");
+  textsSection.classList.add("list-only");
+
+  textDetails.forEach(detail => {
+    detail.style.display = "none";
+  });
+
+  const list = textsSection.querySelector(".texts-list");
+  if (list) list.style.display = "block";
+}
+
+// 상세 보기
+function showTextDetail(id) {
+  if (!textsSection) return;
+
+  const list = textsSection.querySelector(".texts-list");
+  if (list) list.style.display = "none";
+
+  textDetails.forEach(detail => {
+    detail.style.display = "none";
+  });
+
+  // 현재 언어 확인
+  const lang = document.documentElement.lang;
+
+  const target = textsSection.querySelector(
+    `.texts-detail [data-lang-block="${lang}"]`
+  );
+
+  if (target) {
+    target.closest(".texts-detail").style.display = "block";
+  }
+
+  textsSection.classList.remove("list-only");
+  textsSection.classList.add("detail-mode");
+}
+
+// 제목 클릭
+textButtons.forEach(btn => {
+  btn.addEventListener("click", () => {
+    showTextDetail(btn.dataset.textId);
+  });
+});
+
+// back 버튼
+backButtons.forEach(btn => {
+  btn.addEventListener("click", resetTextsToList);
+});
+
+// nav에서 texts 누르면 무조건 리스트
+
+navButtons.forEach(btn => {
+  btn.addEventListener("click", () => {
+    if (btn.dataset.target === "texts") {
+      resetTextsToList();
+    }
+  });
+});
+
+// 초기 상태
+resetTextsToList();
