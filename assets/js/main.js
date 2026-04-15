@@ -393,12 +393,53 @@ function setLanguage(lang) {
     /* =========================
    TEXTS (안정 버전)
 ========================= */
-
-const textsSection = document.getElementById("texts");
+/* =========================
+   TEXTS
+========================= */
 
 const textButtons = document.querySelectorAll(".text-title-button");
-const textDetails = document.querySelectorAll(".texts-detail");
-const backButtons = document.querySelectorAll("#backToTexts");
+const textContents = document.querySelectorAll(".text-detail-content");
+
+const textsList = document.querySelector(".texts-list");
+const textsDetail = document.querySelector(".texts-detail");
+
+const backBtn = document.getElementById("backToTexts");
+
+
+// 처음엔 detail 숨김
+textsDetail.style.display = "none";
+
+
+// 글 클릭
+textButtons.forEach(button => {
+  button.addEventListener("click", () => {
+
+    const targetId = button.dataset.textId;
+
+    textsList.style.display = "none";
+    textsDetail.style.display = "block";
+
+    textContents.forEach(content => {
+
+      if (content.dataset.textContent === targetId) {
+        content.style.display = "block";
+      } else {
+        content.style.display = "none";
+      }
+
+    });
+
+  });
+});
+
+
+// 뒤로가기
+backBtn.addEventListener("click", () => {
+
+  textsList.style.display = "block";
+  textsDetail.style.display = "none";
+
+});
 
 // 처음엔 리스트만 보이게
 function resetTextsToList() {
