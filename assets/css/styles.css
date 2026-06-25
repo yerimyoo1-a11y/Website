@@ -586,6 +586,7 @@
 
     #texts .texts-detail p + p {
   margin-top: 16px;
+  
 }
 
 #texts .texts-detail h2 {
@@ -598,6 +599,8 @@
 }
 .texts-detail {
   display: none;
+  line-height: 1.6;
+ 
 }
 .text-item{
   padding:12px 0;
